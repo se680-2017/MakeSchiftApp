@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+<!--Takes the username used to sign in and displays it in the homepage-->
+<h1 th:inline="text">Hello, [[${#httpServletRequest.remoteUser}]]!</h1>
+
+<form style="float:right" th:action="@{/logout}" method="post">
+    <input type="submit" value="Sign Out"/>
+</form>
+
+<!--FileStack library and API. Note: data-fp-apikey="" is left empty for security reasons since
+code will be made public on github-->
+<script type="text/javascript" src="//api.filestackapi.com/filestack.js"></script>
+<input type="filepicker" data-fp-apikey="" data-fp-mimetypes="*/*"
+       data-fp-container="modal" data-fp-store-location="S3" onchange="alert(event.fpfile.url)"/>
+
+</body>
+</html>

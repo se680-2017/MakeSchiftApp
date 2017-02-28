@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MakeSchiftApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(MakeSchiftApplication.class, args);
 	}
 }
