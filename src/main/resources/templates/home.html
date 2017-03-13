@@ -6,6 +6,9 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/react@15/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
     <style>
  /* USER PROFILE PAGE */
 body{
@@ -154,8 +157,20 @@ $(".btn-pref .btn").click(function () {
 
              <!-- Tab 2: List of files the user can download and their remaining time -->
              <div class="tab-pane fade in" id="tab2">
-                 <div><a href="home.html">file2.jpg</a> -- available for 2 days</div>
-                 <div><a href="home.html">file3.jpg</a> -- available for 3 days</div>
+                 <script type="text/babel">
+                     function DownloadableFile( props ){
+                         return <a href="http://facebook.com/">{props.filename} -- available until {props.deadline}</a>;
+                     }
+                     const element1 = <DownloadableFile filename="file1.jpg" deadline="Wed, 10:30 PM"/>;
+                     const element2 = <DownloadableFile filename="file2.jpg" deadline="Wed, 10:45 PM"/>;
+                     const element3 = <DownloadableFile filename="file3.jpg" deadline="Wed, 11:00 PM"/>;
+                     ReactDOM.render( element1, document.getElementById('downloadable1') );
+                     ReactDOM.render( element2, document.getElementById('downloadable2') );
+                     ReactDOM.render( element3, document.getElementById('downloadable3') );
+                 </script>
+                 <div id="downloadable1" />
+                 <div id="downloadable2" />
+                 <div id="downloadable3" />
              </div>
 
              <!-- Tab 3: List of files the user has uploaded and their status -->
