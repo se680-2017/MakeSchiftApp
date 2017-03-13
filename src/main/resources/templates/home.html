@@ -1,14 +1,12 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
- 
     <title>Getting Started: Serving Web Content</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-
- <style>
+    <style>
  /* USER PROFILE PAGE */
 body{
   background-color: #f77a5b;
@@ -90,8 +88,7 @@ body{
 .well{
   background-color: #f79a79;
 }
- 
- </style>
+    </style>
 </head>
 <body>
 
@@ -107,20 +104,18 @@ $(".btn-pref .btn").click(function () {
  
 <div class="cardboard">
     <div class="card hovercard">
-    
         <div class="card-background">
-        
             <img class="card-bkimg" alt="" src="http://pictures.topspeed.com/IMG/crop/201608/lamborghini-aventado-10_600x0w.jpg"/>
             <!-- http://lorempixel.com/850/280/people/9/ -->
         </div>
         <div class="useravatar" style="padding-left:70px;">
-        <form style="float:right" th:action="@{/logout}" method="post">
-    <input type="submit" value="Sign Out"/>
-</form>
+            <form style="float:right" th:action="@{/logout}" method="post">
+                <input type="submit" value="Sign Out"/>
+            </form>
             <img  alt="" src="http://pictures.topspeed.com/IMG/crop/201608/lamborghini-aventado-10_600x0w.jpg"/>
         </div>
-        <div class="card-info"> <span class="card-title">RekMor</span>
-
+        <div class="card-info">
+            <span class="card-title">RekMor</span>
         </div>
     </div>
     <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group" aria-label="...">
@@ -140,41 +135,32 @@ $(".btn-pref .btn").click(function () {
             </button>
         </div>
     </div>
-
-        <div class="well" >
-      <div class="tab-content" style="text-align: center;">
-        <div class="tab-pane fade in active" id="tab1">
-          <!--Takes the username used to sign in and displays it in the homepage-->
-<h1 th:inline="text">Hello, [[${#httpServletRequest.remoteUser}]]!</h1>
-
-
-
-<br/>
-
-
-<!--FileStack library and API. Note: data-fp-apikey="" is left empty for security reasons since
-code will be made public on github-->
-<script type="text/javascript" src="//api.filestackapi.com/filestack.js"></script>
-<div style="float:center">
-<input  type="filepicker" data-fp-apikey="" data-fp-mimetypes="*/*"
-       data-fp-container="modal" data-fp-store-location="S3" onchange="alert(event.fpfile.url)"/>
-       </div>
-        </div>
-        <div class="tab-pane fade in" id="tab2">
-          <h3>This is tab 2</h3>
-          <h3>This is tab 2</h3>
-          <h3>This is tab 2</h3>
-          <h3>This is tab 2</h3>
-        </div>
-        <div class="tab-pane fade in" id="tab3">
-          <h3>This is tab 3</h3>
-        </div>
-      </div>
+    <div class="well" >
+         <div class="tab-content" style="text-align: center;">
+             <div class="tab-pane fade in active" id="tab1">
+                 <!--Takes the username used to sign in and displays it in the homepage-->
+                 <h1 th:inline="text">Hello, [[${#httpServletRequest.remoteUser}]]!</h1>
+                 <br/>
+                 <!-- FileStack library and API. Note: data-fp-apikey="" is left empty for security reasons since
+                      code will be made public on github -->
+                 <script type="text/javascript" src="//api.filestackapi.com/filestack.js" ></script>
+                 <div style="float:center">
+                     <input  type="filepicker" data-fp-apikey="" data-fp-mimetypes="*/*"
+                             data-fp-container="modal" data-fp-store-location="S3" onchange="alert(event.fpfile.url)" />
+                 </div>
+             </div>
+             <div class="tab-pane fade in" id="tab2">
+                 <h3>This is tab 2</h3>
+                 <h3>This is tab 2</h3>
+                 <h3>This is tab 2</h3>
+                 <h3>This is tab 2</h3>
+             </div>
+             <div class="tab-pane fade in" id="tab3">
+                 <h3>This is tab 3</h3>
+             </div>
+         </div>
     </div>
-    </div>
-    
-   
-
+</div>
 
 </body>
 </html>
