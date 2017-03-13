@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Getting Started: Serving Web Content</title>
+    <title>MakeSchift Home</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -158,19 +158,55 @@ $(".btn-pref .btn").click(function () {
              <!-- Tab 2: List of files the user can download and their remaining time -->
              <div class="tab-pane fade in" id="tab2">
                  <script type="text/babel">
-                     function DownloadableFile( props ){
-                         return <a href="http://facebook.com/">{props.filename} -- available until {props.deadline}</a>;
+                     class DownloadableFile extends React.Component {
+                         constructor( props ){
+                             super( props );
+                             this.state = {
+                                 // TODO: Initialize with a time retrieved from AWS
+                                 countdown: new Date()
+                             };
+                         }
+                         componentDidMount() {
+                             this.timerID = setInterval(
+                                 () => this.tick(),
+                                 1000
+                             );
+                         }
+                         componentWillUnmount() {
+                             clearInterval(this.timerID);
+                         }
+                         tick() {
+                             this.setState({
+                                 // TODO: decrement time left
+                                 countdown: new Date()
+                             });
+                         }
+                         render () {
+                             return (
+                                 // TODO: Make deadline a dynamic countdown
+                                 <div>
+                                     <a href="http://facebook.com/">
+                                         {this.props.filename} -- available until {this.props.deadline} {this.state.countdown.toLocaleTimeString()}
+                                     </a>
+                                 </div>
+                             )
+                         }
                      }
-                     const element1 = <DownloadableFile filename="file1.jpg" deadline="Wed, 10:30 PM"/>;
-                     const element2 = <DownloadableFile filename="file2.jpg" deadline="Wed, 10:45 PM"/>;
-                     const element3 = <DownloadableFile filename="file3.jpg" deadline="Wed, 11:00 PM"/>;
-                     ReactDOM.render( element1, document.getElementById('downloadable1') );
-                     ReactDOM.render( element2, document.getElementById('downloadable2') );
-                     ReactDOM.render( element3, document.getElementById('downloadable3') );
+                     class DownloadableList extends React.Component {
+                         render() {
+                             return (
+                                 // TODO: Remove these placeholder items with something more dynamic,
+                                 //       something that can display results of an AWS query.
+                                 <div>
+                                     <DownloadableFile filename="file1.jpg" deadline="Wed, 10:30 PM" />
+                                     <DownloadableFile filename="file2.jpg" deadline="Wed, 10:45 PM"/>
+                                     <DownloadableFile filename="file3.jpg" deadline="Wed, 11:00 PM"/>
+                                 </div>
+                             )
+                         }
+                     }
+                     ReactDOM.render( <DownloadableList />, document.getElementById('tab2') );
                  </script>
-                 <div id="downloadable1" />
-                 <div id="downloadable2" />
-                 <div id="downloadable3" />
              </div>
 
              <!-- Tab 3: List of files the user has uploaded and their status -->
