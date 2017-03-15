@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/react@15/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js"></script>
     <style>
  /* USER PROFILE PAGE */
 body{
@@ -158,6 +159,83 @@ $(".btn-pref .btn").click(function () {
              <!-- Tab 2: List of files the user can download and their remaining time -->
              <div class="tab-pane fade in" id="tab2">
                  <script type="text/babel">
+                     var akid = 'X';
+                     var secretKey = 'X';
+                     //function minimal(){
+                     //    return "minimal works."
+                     //}
+                     //var roleArn = 'arn:aws:iam::496356032579:user/MakeSchiftApp ';
+                     // Initialize the Amazon Cognito credentials provider
+                     //AWS.config.region = 'us-west-2'; // Region
+                     //AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                     //    IdentityPoolId: 'us-west-2:1bfddf5f-b208-4377-8282-9b4665c3c72b',
+                     //});
+                     AWS.config = new AWS.Config({
+                         accessKeyId: akid,
+                         secretAccessKey: secretKey,
+                         region: 'us-west-2'
+                     });
+                     //AWS.config.accessKeyId: 'XX';
+                     //AWS.config.secretAccessKey: 'XX';
+                     //AWS.config.region: 'us-west-2'
+                     //});
+                     //var bucket = new AWS.S3({
+                     //    params: {
+                     //        Bucket: "makeschiftbucket"
+                     //    }
+                     //});
+                     function listObjs() {
+                         //AWS.config = new AWS.Config({
+                         //    accessKeyId: 'XX',
+                         //    secretAccessKey: 'XX',
+                         //    region: 'us-west-2'
+                         //});
+                         var result = "FOUND NOTHING";
+                         var options = {
+                             accessKeyId: akid,
+                             secretAccessKey: secretKey,
+                             region: 'us-west-2'
+                         }
+                         var s3 = new AWS.S3( options );
+                         var params = {
+                             //Bucket: "makeschiftbucket"
+                         };
+                         //s3.accessKeyId = "pork"
+                         //console.log( s3.accessKeyId )
+                         s3.listBuckets( params, function(err,data) {
+                             if (err) {
+                                 console.log(err, err.stack);
+                                 console.log("error");
+                             }
+                             else console.log("no error");
+                         });
+                         /*s3.listObjectsV2( params, function(err, data) {
+                             if(err){
+                                 console.log("WERE HERE JOHNNY");
+                                 console.log(err, err.stack); // an error occurred
+                             }
+                             else {
+                                 console.log("HERE BE DATA");
+                                 console.log(data);
+                                 result = data.name()
+                             }           // successful response
+                         });*/
+                         //bucket.listObjects({}, function (err, data) {
+                         //    if (err) {
+                         //        result = 'ERROR: ' + err;
+                         //    }
+                         //    else {
+                         //        var objKeys = "";
+                         //        data.Contents.forEach(function (obj) {
+                         //            objKeys += obj.Key + "<br/>";
+                         //        });
+                         //        if (objKeys != "") {
+                         //            result = objKeys;
+                         //        }
+                         //    }
+                         //});
+                         return result;
+                     }
                      class DownloadableFile extends React.Component {
                          constructor( props ){
                              super( props );
@@ -186,8 +264,38 @@ $(".btn-pref .btn").click(function () {
                                  // TODO: Make deadline a dynamic countdown
                                  <div>
                                      <a href="http://facebook.com/">
-                                         {this.props.filename} -- available until {this.props.deadline} {this.state.countdown.toLocaleTimeString()}
+                                         {this.props.filename} -- available
+                                         until {this.props.deadline} {this.state.countdown.toLocaleTimeString()}
                                      </a>
+                                 </div>
+                             )
+                         }
+                     }
+                     class AwsLsTest extends React.Component {
+                         constructor( props ){
+                             super( props );
+                             this.state = {
+                                 filelist: listObjs()
+                             };
+                         }
+                         componentDidMount() {
+                             this.timerID = setInterval(
+                                 () => this.tick(),
+                                 15000
+                             );
+                         }
+                         componentWillUnmount() {
+                             clearInterval(this.timerID);
+                         }
+                         tick() {
+                             this.setState({
+                                 filelist: listObjs()
+                             });
+                         }
+                         render () {
+                             return (
+                                 <div>
+                                     {this.state.filelist.toString()}
                                  </div>
                              )
                          }
@@ -198,6 +306,7 @@ $(".btn-pref .btn").click(function () {
                                  // TODO: Remove these placeholder items with something more dynamic,
                                  //       something that can display results of an AWS query.
                                  <div>
+                                     <AwsLsTest />
                                      <DownloadableFile filename="file1.jpg" deadline="Wed, 10:30 PM" />
                                      <DownloadableFile filename="file2.jpg" deadline="Wed, 10:45 PM"/>
                                      <DownloadableFile filename="file3.jpg" deadline="Wed, 11:00 PM"/>
