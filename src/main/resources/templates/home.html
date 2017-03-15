@@ -162,14 +162,23 @@ $(".btn-pref .btn").click(function () {
                          constructor( props ){
                              super( props );
                              this.state = {
-                                 countdown: new Date()
+                                 countdown: this.timeLeft()
                              };
                          }
                          fullUrl() {
                              return 'https://s3.amazonaws.com/makeschiftbucket/' + this.props.filename
                          }
                          fileMessage(){
-                             return this.props.filename + " -- available until " + this.props.deadline + " " + this.state.countdown.toLocaleTimeString()
+                             return this.props.filename + " -- available until " + this.props.deadline.toLocaleString()
+                                 + " -- " + this.state.countdown
+                         }
+                         timeLeft(){
+                             var deadline_ms = this.props.deadline.getTime()
+                             var rightnow_ms = new Date().getTime()
+                             var millis_left = deadline_ms - rightnow_ms
+                             return Math.floor(millis_left/3600000) + "h "
+                                    + (Math.floor(millis_left/60000))%60 + "m "
+                                    + (Math.floor(millis_left/1000))%60 + "s remaining"
                          }
                          componentDidMount() {
                              this.timerID = setInterval(
@@ -182,12 +191,10 @@ $(".btn-pref .btn").click(function () {
                          }
                          tick() {
                              this.setState({
-                                 // TODO: decrement time left
-                                 countdown: new Date()
+                                 countdown: this.timeLeft()
                              });
                          }
                          render () {
-                             // TODO: Make deadline a dynamic countdown
                              return React.createElement(
                                  'div', {},
                                  React.createElement(
@@ -198,15 +205,13 @@ $(".btn-pref .btn").click(function () {
                      }
                      class DownloadableList extends React.Component {
                          render() {
-                             return (
-                                 // TODO: Remove these placeholder items with something more dynamic,
-                                 //       something that can display results of an AWS query.
-                                 <div>
-                                     <DownloadableFile filename="file1.txt" deadline="Wed, 10:30 PM" />
-                                     <DownloadableFile filename="file2.jpg" deadline="Wed, 10:45 PM"/>
-                                     <DownloadableFile filename="file3.jpg" deadline="Wed, 11:00 PM"/>
-                                 </div>
-                             )
+                             return React.createElement(
+                                 "div",
+                                 null,
+                                 React.createElement(DownloadableFile, { filename: "file1.txt", deadline: new Date(2017,2,15,22,30) }),
+                                 React.createElement(DownloadableFile, { filename: "file2.jpg", deadline: new Date(2017,2,15,22,45) }),
+                                 React.createElement(DownloadableFile, { filename: "file3.jpg", deadline: new Date(2017,2,15,23,0) })
+                             );
                          }
                      }
                      ReactDOM.render( <DownloadableList />, document.getElementById('tab2') );
