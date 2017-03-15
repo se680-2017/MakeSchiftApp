@@ -162,9 +162,14 @@ $(".btn-pref .btn").click(function () {
                          constructor( props ){
                              super( props );
                              this.state = {
-                                 // TODO: Initialize with a time retrieved from AWS
                                  countdown: new Date()
                              };
+                         }
+                         fullUrl() {
+                             return 'https://s3.amazonaws.com/makeschiftbucket/' + this.props.filename
+                         }
+                         fileMessage(){
+                             return this.props.filename + " -- available until " + this.props.deadline + " " + this.state.countdown.toLocaleTimeString()
                          }
                          componentDidMount() {
                              this.timerID = setInterval(
@@ -182,14 +187,13 @@ $(".btn-pref .btn").click(function () {
                              });
                          }
                          render () {
-                             return (
-                                 // TODO: Make deadline a dynamic countdown
-                                 <div>
-                                     <a href="http://facebook.com/">
-                                         {this.props.filename} -- available until {this.props.deadline} {this.state.countdown.toLocaleTimeString()}
-                                     </a>
-                                 </div>
-                             )
+                             // TODO: Make deadline a dynamic countdown
+                             return React.createElement(
+                                 'div', {},
+                                 React.createElement(
+                                     'a', { href: this.fullUrl(), target: "_blank" }, this.fileMessage()
+                                 )
+                             );
                          }
                      }
                      class DownloadableList extends React.Component {
@@ -198,7 +202,7 @@ $(".btn-pref .btn").click(function () {
                                  // TODO: Remove these placeholder items with something more dynamic,
                                  //       something that can display results of an AWS query.
                                  <div>
-                                     <DownloadableFile filename="file1.jpg" deadline="Wed, 10:30 PM" />
+                                     <DownloadableFile filename="file1.txt" deadline="Wed, 10:30 PM" />
                                      <DownloadableFile filename="file2.jpg" deadline="Wed, 10:45 PM"/>
                                      <DownloadableFile filename="file3.jpg" deadline="Wed, 11:00 PM"/>
                                  </div>
