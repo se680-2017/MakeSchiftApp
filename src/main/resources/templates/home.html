@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
  
-    <title>Getting Started: Serving Web Content</title>
+    <title>Welcome To MakeSchift</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
      <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
@@ -117,8 +117,8 @@ $(".btn-pref .btn").click(function () {
         </div>
         <div class="useravatar" style="padding-left:70px;">
         <form style="float:right" th:action="@{/logout}" method="post">
-    <input type="submit" value="Sign Out"/>
-</form>
+            <input type="submit" value="Sign Out"/>
+        </form>
             <img  alt="" src="http://pictures.topspeed.com/IMG/crop/201608/lamborghini-aventado-10_600x0w.jpg"/>
         </div>
         <div class="card-info"> <span class="card-title">RekMor</span>
@@ -145,21 +145,20 @@ $(".btn-pref .btn").click(function () {
 
         <div class="well" >
       <div class="tab-content" style="text-align: center;">
+
         <div class="tab-pane fade in active" id="tab1">
           <!--Takes the username used to sign in and displays it in the homepage-->
-<h1 th:inline="text">Hello, [[${#httpServletRequest.remoteUser}]]!</h1>
-
-
+            <h1 th:inline="text">Hello, [[${#httpServletRequest.remoteUser}]]!</h1>
 
 <br/>
 
     <!--FileStack library and API. Note: data-fp-apikey="" is left empty for security reasons since
 code will be made public on github -->
 <script type="text/javascript" src="//api.filestackapi.com/filestack.js"></script>
-<div style="float:center">
-<input  type="filepicker" data-fp-apikey="" data-fp-mimetypes="*/*"
-       data-fp-container="modal" data-fp-store-location="S3" onchange="alert(event.fpfile.url)"/>
-       </div>
+            <div style="float:center">
+                <input  type="filepicker" data-fp-apikey="" data-fp-mimetypes="*/*"
+                    data-fp-container="modal" data-fp-store-location="S3" onchange="alert(event.fpfile.url)"/>
+            </div>
         </div>
         <div class="tab-pane fade in" id="tab2">
           <h3>This is tab 2</h3>
