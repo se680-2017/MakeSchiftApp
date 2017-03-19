@@ -2,15 +2,31 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org" >
 <head>
-    <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  
+   
+      <meta charset="utf-8"></meta>
+  
+      
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
-    <title>Spring Secure Login</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+		
 
-    <!--<link rel="stylesheet" type="text/css" media="screen"
-          href="/static/css/login.css" />       -->
+		<!-- Website CSS style -->
+		
+
+		<!-- Website Font style -->
+	  
+		
+		<!-- Google Fonts -->
+		<link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'></link>
+		<link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'></link>
+  
     <style>
+    body{
+  background-color: #f77a5b;
+}
         .form-signin {
             /*float: right;*/
             max-width: 230px;
@@ -72,17 +88,23 @@
             background-color: #337ab7;
             border-color: #2e6da4;
         }
+        h2 { 
+	
+	font-family: 'Passion One', cursive; 
+	font-weight: 400; 
+	text-align: center;
+}
     </style>
 
 </head>
 <body>
-<h1>Members have access to an unlimited... blah blah blah.</h1>
+
 
 <div th:if="${param.error}">Invalid username and Password.</div>
 <div th:if="${param.logout}">You have been logged out.</div>
-
-<form class="form-signin" th:action="@{/login}" method="post">
-    <h2 class="form-signin-heading">Please sign in</h2>
+<br/><br/><br/><br/><br/><br/><br/>
+<form class="form-signin" th:action="@{/login}" method="post" >
+    <h2 class="form-signin-heading" style="text-align:center">Please sign in</h2>
     <input type="text" name="username" class="form-control" placeholder="username"
            th:required="required" th:autofocus="autofocus"/>
     <input type="password" name="password" class="form-control" placeholder="Password"
@@ -96,7 +118,7 @@
 
     <!--TODO: Create a registration page to link to-->
     <div class="register">
-        <label>Don't have an account? Click here to Register</label>
+        <label style="text-align: center">Don't have an account? Click here to Register</label>
     </div>
 </form>
 

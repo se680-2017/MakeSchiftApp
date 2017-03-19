@@ -1,14 +1,15 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
- 
-    <title>Getting Started: Serving Web Content</title>
+    <title>MakeSchift Home</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-
- <style>
+    <script src="https://unpkg.com/react@15/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <style>
  /* USER PROFILE PAGE */
 body{
   background-color: #f77a5b;
@@ -90,8 +91,7 @@ body{
 .well{
   background-color: #f79a79;
 }
- 
- </style>
+    </style>
 </head>
 <body>
 
@@ -107,20 +107,18 @@ $(".btn-pref .btn").click(function () {
  
 <div class="cardboard">
     <div class="card hovercard">
-    
         <div class="card-background">
-        
             <img class="card-bkimg" alt="" src="http://pictures.topspeed.com/IMG/crop/201608/lamborghini-aventado-10_600x0w.jpg"/>
             <!-- http://lorempixel.com/850/280/people/9/ -->
         </div>
         <div class="useravatar" style="padding-left:70px;">
-        <form style="float:right" th:action="@{/logout}" method="post">
-    <input type="submit" value="Sign Out"/>
-</form>
+            <form style="float:right" th:action="@{/logout}" method="post">
+                <input type="submit" value="Sign Out"/>
+            </form>
             <img  alt="" src="http://pictures.topspeed.com/IMG/crop/201608/lamborghini-aventado-10_600x0w.jpg"/>
         </div>
-        <div class="card-info"> <span class="card-title">RekMor</span>
-
+        <div class="card-info">
+            <span class="card-title">RekMor</span>
         </div>
     </div>
     <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group" aria-label="...">
@@ -140,41 +138,109 @@ $(".btn-pref .btn").click(function () {
             </button>
         </div>
     </div>
+    <div class="well" >
+         <div class="tab-content" style="text-align: center;">
 
-        <div class="well" >
-      <div class="tab-content" style="text-align: center;">
-        <div class="tab-pane fade in active" id="tab1">
-          <!--Takes the username used to sign in and displays it in the homepage-->
-<h1 th:inline="text">Hello, [[${#httpServletRequest.remoteUser}]]!</h1>
+             <!-- Tab 1: Mechanism for uploading the file -->
+             <div class="tab-pane fade in active" id="tab1">
+                 <!--Takes the username used to sign in and displays it in the homepage-->
+                 <h1 th:inline="text">Hello, [[${#httpServletRequest.remoteUser}]]!</h1>
+                 <br/>
+                 <!-- FileStack library and API. Note: data-fp-apikey="" is left empty for security reasons since
+                      code will be made public on github -->
+                 <script type="text/javascript" src="//api.filestackapi.com/filestack.js" >
+                
+                 </script>
+                 
+                 <script>
+                 function myfunc(){
+                	 
+                	 alert(event.fpfile.url) ;
+                	 console.log("i got here yaaaay");
+                	 document.getElementById("link").value=event.fpfile.url;
+                 }
+                 </script>
+                 <div style="float:center">
+                     <input  type="filepicker" data-fp-apikey="AGb6SxKVuQUCDx2M79x5wz" data-fp-mimetypes="*/*"
+                             data-fp-container="modal" data-fp-store-location="S3" onchange="myfunc()" />
+                             
+                 </div>
+                 <div>
+                 <input type="text" id="link"> link Genarator</input>
+                 </div>
+             </div>
 
+             <!-- Tab 2: List of files the user can download and their remaining time -->
+             <div class="tab-pane fade in" id="tab2">
+                 <script type="text/babel">
+                     class DownloadableFile extends React.Component {
+                         constructor( props ){
+                             super( props );
+                             this.state = {
+                                 countdown: this.timeLeft()
+                             };
+                         }
+                         fullUrl() {
+                             return 'https://s3.amazonaws.com/makeschiftbucket/' + this.props.filename
+                         }
+                         fileMessage(){
+                             return this.props.filename + " -- available until " + this.props.deadline.toLocaleString()
+                                 + " -- " + this.state.countdown
+                         }
+                         timeLeft(){
+                             var deadline_ms = this.props.deadline.getTime()
+                             var rightnow_ms = new Date().getTime()
+                             var millis_left = deadline_ms - rightnow_ms
+                             return Math.floor(millis_left/3600000) + "h "
+                                    + (Math.floor(millis_left/60000))%60 + "m "
+                                    + (Math.floor(millis_left/1000))%60 + "s remaining"
+                         }
+                         componentDidMount() {
+                             this.timerID = setInterval(
+                                 () => this.tick(),
+                                 1000
+                             );
+                         }
+                         componentWillUnmount() {
+                             clearInterval(this.timerID);
+                         }
+                         tick() {
+                             this.setState({
+                                 countdown: this.timeLeft()
+                             });
+                         }
+                         render () {
+                             return React.createElement(
+                                 'div', {},
+                                 React.createElement(
+                                     'a', { href: this.fullUrl(), target: "_blank" }, this.fileMessage()
+                                 )
+                             );
+                         }
+                     }
+                     class DownloadableList extends React.Component {
+                         render() {
+                             return React.createElement(
+                                 "div",
+                                 null,
+                                 React.createElement(DownloadableFile, { filename: "file1.txt", deadline: new Date(2017,2,15,22,30) }),
+                                 React.createElement(DownloadableFile, { filename: "file2.jpg", deadline: new Date(2017,2,15,22,45) }),
+                                 React.createElement(DownloadableFile, { filename: "file3.jpg", deadline: new Date(2017,2,15,23,0) })
+                             );
+                         }
+                     }
+                     ReactDOM.render( <DownloadableList />, document.getElementById('tab2') );
+                 </script>
+             </div>
 
+             <!-- Tab 3: List of files the user has uploaded and their status -->
+             <div class="tab-pane fade in" id="tab3">
+                 <h3>This is tab 3</h3>
+             </div>
 
-<br/>
-
-
-<!--FileStack library and API. Note: data-fp-apikey="" is left empty for security reasons since
-code will be made public on github-->
-<script type="text/javascript" src="//api.filestackapi.com/filestack.js"></script>
-<div style="float:center">
-<input  type="filepicker" data-fp-apikey="" data-fp-mimetypes="*/*"
-       data-fp-container="modal" data-fp-store-location="S3" onchange="alert(event.fpfile.url)"/>
-       </div>
-        </div>
-        <div class="tab-pane fade in" id="tab2">
-          <h3>This is tab 2</h3>
-          <h3>This is tab 2</h3>
-          <h3>This is tab 2</h3>
-          <h3>This is tab 2</h3>
-        </div>
-        <div class="tab-pane fade in" id="tab3">
-          <h3>This is tab 3</h3>
-        </div>
-      </div>
+         </div>
     </div>
-    </div>
-    
-   
-
+</div>
 
 </body>
 </html>
