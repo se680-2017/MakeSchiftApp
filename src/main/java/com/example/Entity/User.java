@@ -1,4 +1,4 @@
-package com.example.Entity;
+package com.example.entity;
 
 /**
  * Created by Eric on 3/17/2017.
