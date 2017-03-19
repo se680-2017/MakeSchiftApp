@@ -9,6 +9,7 @@
     <script src="https://unpkg.com/react@15/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js"></script>
     <style>
  /* USER PROFILE PAGE */
 body{
@@ -172,6 +173,15 @@ $(".btn-pref .btn").click(function () {
              <!-- Tab 2: List of files the user can download and their remaining time -->
              <div class="tab-pane fade in" id="tab2">
                  <script type="text/babel">
+                     var options = {
+                         accessKeyId: 'X',
+                         secretAccessKey: 'X',
+                         region: 'us-east-1',
+                         apiVersion: '2006-03-01'
+                     }
+
+                     var result = "";
+
                      class DownloadableFile extends React.Component {
                          constructor( props ){
                              super( props );
@@ -217,11 +227,65 @@ $(".btn-pref .btn").click(function () {
                              );
                          }
                      }
+                     class AwsLsTest extends React.Component {
+                         constructor( props ){
+                             super( props );
+                             this.state = {
+                                 filelist: this.listObjs()
+                             };
+                         }
+                         listObjs() {
+                             var s3 = new AWS.S3( options );
+                             var params = {
+                                 Bucket: "makeschiftbucket"
+                             };
+                             console.log('s3 region is', s3.config );
+                             s3.listObjectsV2( params, function(err,data) {
+                                 if (err) {
+                                     console.log(err, err.stack);
+                                     console.log("ALAS, POOR YORICK");
+                                 }
+                                 else{
+                                     console.log("I AM A BALLER");
+                                     var objKeys = "";
+                                     data.Contents.forEach(function (obj) {
+                                         objKeys += obj.Key + " ";
+                                     });
+                                     if (objKeys != "") {
+                                         result = objKeys;
+                                     }
+                                 }
+                             });
+                             return result;
+                         }
+                         componentDidMount() {
+                             this.timerID = setInterval(
+                                 () => this.tick(),
+                                 5000
+                             );
+                         }
+                         componentWillUnmount() {
+                             clearInterval(this.timerID);
+                         }
+                         tick() {
+                             this.setState({
+                                 filelist: this.listObjs()
+                             });
+                         }
+                         render () {
+                             return (
+                                 <div>
+                                     {this.state.filelist.toString()}
+                                 </div>
+                             )
+                         }
+                     }
                      class DownloadableList extends React.Component {
                          render() {
                              return React.createElement(
                                  "div",
                                  null,
+                                 React.createElement(AwsLsTest, {}),
                                  React.createElement(DownloadableFile, { filename: "file1.txt", deadline: new Date(2017,2,15,22,30) }),
                                  React.createElement(DownloadableFile, { filename: "file2.jpg", deadline: new Date(2017,2,15,22,45) }),
                                  React.createElement(DownloadableFile, { filename: "file3.jpg", deadline: new Date(2017,2,15,23,0) })
