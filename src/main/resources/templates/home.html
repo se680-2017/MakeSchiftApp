@@ -159,83 +159,15 @@ $(".btn-pref .btn").click(function () {
              <!-- Tab 2: List of files the user can download and their remaining time -->
              <div class="tab-pane fade in" id="tab2">
                  <script type="text/babel">
-                     var akid = 'X';
-                     var secretKey = 'X';
-                     //function minimal(){
-                     //    return "minimal works."
-                     //}
-                     //var roleArn = 'arn:aws:iam::496356032579:user/MakeSchiftApp ';
-                     // Initialize the Amazon Cognito credentials provider
-                     //AWS.config.region = 'us-west-2'; // Region
-                     //AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-                     //    IdentityPoolId: 'us-west-2:1bfddf5f-b208-4377-8282-9b4665c3c72b',
-                     //});
-                     AWS.config = new AWS.Config({
-                         accessKeyId: akid,
-                         secretAccessKey: secretKey,
-                         region: 'us-west-2'
-                     });
-                     //AWS.config.accessKeyId: 'XX';
-                     //AWS.config.secretAccessKey: 'XX';
-                     //AWS.config.region: 'us-west-2'
-                     //});
-                     //var bucket = new AWS.S3({
-                     //    params: {
-                     //        Bucket: "makeschiftbucket"
-                     //    }
-                     //});
-                     function listObjs() {
-                         //AWS.config = new AWS.Config({
-                         //    accessKeyId: 'XX',
-                         //    secretAccessKey: 'XX',
-                         //    region: 'us-west-2'
-                         //});
-                         var result = "FOUND NOTHING";
-                         var options = {
-                             accessKeyId: akid,
-                             secretAccessKey: secretKey,
-                             region: 'us-west-2'
-                         }
-                         var s3 = new AWS.S3( options );
-                         var params = {
-                             //Bucket: "makeschiftbucket"
-                         };
-                         //s3.accessKeyId = "pork"
-                         //console.log( s3.accessKeyId )
-                         s3.listBuckets( params, function(err,data) {
-                             if (err) {
-                                 console.log(err, err.stack);
-                                 console.log("error");
-                             }
-                             else console.log("no error");
-                         });
-                         /*s3.listObjectsV2( params, function(err, data) {
-                             if(err){
-                                 console.log("WERE HERE JOHNNY");
-                                 console.log(err, err.stack); // an error occurred
-                             }
-                             else {
-                                 console.log("HERE BE DATA");
-                                 console.log(data);
-                                 result = data.name()
-                             }           // successful response
-                         });*/
-                         //bucket.listObjects({}, function (err, data) {
-                         //    if (err) {
-                         //        result = 'ERROR: ' + err;
-                         //    }
-                         //    else {
-                         //        var objKeys = "";
-                         //        data.Contents.forEach(function (obj) {
-                         //            objKeys += obj.Key + "<br/>";
-                         //        });
-                         //        if (objKeys != "") {
-                         //            result = objKeys;
-                         //        }
-                         //    }
-                         //});
-                         return result;
+                     var options = {
+                         accessKeyId: 'X',
+                         secretAccessKey: 'X',
+                         region: 'us-east-1',
+                         apiVersion: '2006-03-01'
                      }
+
+                     var result = "";
+
                      class DownloadableFile extends React.Component {
                          constructor( props ){
                              super( props );
@@ -275,13 +207,37 @@ $(".btn-pref .btn").click(function () {
                          constructor( props ){
                              super( props );
                              this.state = {
-                                 filelist: listObjs()
+                                 filelist: this.listObjs()
                              };
+                         }
+                         listObjs() {
+                             var s3 = new AWS.S3( options );
+                             var params = {
+                                 Bucket: "makeschiftbucket"
+                             };
+                             console.log('s3 region is', s3.config );
+                             s3.listObjectsV2( params, function(err,data) {
+                                 if (err) {
+                                     console.log(err, err.stack);
+                                     console.log("ALAS, POOR YORICK");
+                                 }
+                                 else{
+                                     console.log("I AM A BALLER");
+                                     var objKeys = "";
+                                     data.Contents.forEach(function (obj) {
+                                         objKeys += obj.Key + " ";
+                                     });
+                                     if (objKeys != "") {
+                                         result = objKeys;
+                                     }
+                                 }
+                             });
+                             return result;
                          }
                          componentDidMount() {
                              this.timerID = setInterval(
                                  () => this.tick(),
-                                 15000
+                                 5000
                              );
                          }
                          componentWillUnmount() {
@@ -289,7 +245,7 @@ $(".btn-pref .btn").click(function () {
                          }
                          tick() {
                              this.setState({
-                                 filelist: listObjs()
+                                 filelist: this.listObjs()
                              });
                          }
                          render () {
