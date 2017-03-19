@@ -148,10 +148,24 @@ $(".btn-pref .btn").click(function () {
                  <br/>
                  <!-- FileStack library and API. Note: data-fp-apikey="" is left empty for security reasons since
                       code will be made public on github -->
+
                  <script type="text/javascript" src="//api.filestackapi.com/filestack.js" ></script>
+                 
+                 <script>
+                 function myfunc(){
+                	 
+                	 alert(event.fpfile.url) ;
+                	 console.log("i got here yaaaay");
+                	 document.getElementById("link").value=event.fpfile.url;
+                 }
+                 </script>
                  <div style="float:center">
                      <input  type="filepicker" data-fp-apikey="" data-fp-mimetypes="*/*"
-                             data-fp-container="modal" data-fp-store-location="S3" onchange="alert(event.fpfile.url)" />
+                             data-fp-container="modal" data-fp-store-location="S3" onchange="myfunc()" />
+                             
+                 </div>
+                 <div>
+                 <input type="text" id="link"> link Genarator</input>
                  </div>
              </div>
 
