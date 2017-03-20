@@ -15,6 +15,7 @@ public class UserDaoImpl implements UserDao{
 
     private static Map<Integer, User> users;
 
+    /*
     static {
         users = new HashMap<Integer, User>(){
             {
@@ -24,6 +25,7 @@ public class UserDaoImpl implements UserDao{
             }
         };
     }
+    */
 
     @Override
     public Collection<User> getAllUsers(){
