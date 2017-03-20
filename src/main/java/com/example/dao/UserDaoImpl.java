@@ -32,12 +32,13 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public User getUserById(int id){
+
         return this.users.get(id);
     }
 
-
     @Override
     public void removeUserById(int id){
+
         this.users.remove(id);
     }
 
@@ -53,6 +54,7 @@ public class UserDaoImpl implements UserDao{
 
     @Override
     public void insertUser(User user){
+
         this.users.put(user.getId(), user);
     }
 }

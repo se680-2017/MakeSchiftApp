@@ -20,21 +20,25 @@ public class UserController{
 
     @RequestMapping(method = RequestMethod.GET)
     public Collection<User> getAllUsers(){
+
         return this.userService.getAllUsers();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public User getUserById (@PathVariable("id") int id){
+
         return userService.getUserById(id);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void deleteUserById (@PathVariable("id") int id){
+
         userService.removeUserById(id);
     }
 
     @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void updateUser(@RequestBody User user){
+
         userService.updateUser(user);
     }
 
