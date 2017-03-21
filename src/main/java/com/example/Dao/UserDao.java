@@ -1,38 +1,20 @@
-package com.example.Dao;
+package com.example.dao;
 
-import com.example.Entity.User;
-import org.springframework.stereotype.Repository;
+import com.example.entity.User;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * Created by Eric on 3/17/2017.
+ * Created by Eric on 3/18/2017.
  */
-@Repository
-public class UserDao{
+public interface UserDao{
+    Collection<User> getAllUsers();
 
-    private static Map<Integer, User> users;
+    User getUserById(int id);
 
-    static {
-        users = new HashMap<Integer, User>(){
-            {
-                put(1, new User(1, "eric", "tapia"));
-                put(2, new User(2, "warren", "kaye"));
-                put(3, new User(3, "hazim", "rekab"));
-            }
-        };
-    }
+    void removeUserById(int id);
 
-    public Collection<User> getAllUsers(){
-        return this.users.values();
-    }
+    void updateUser(User user);
 
-    public User getUserById(int id){
-        return this.users.get(id);
-    }
-
-
+    void insertUser(User user);
 }

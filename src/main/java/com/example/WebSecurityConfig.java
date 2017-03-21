@@ -11,19 +11,22 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
  * Created by Eric on 2/27/2017.
  */
 @Configuration
-@EnableWebSecurity
+//@EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
+        http.csrf().disable();//delete this to get back to normal
         http
                 .authorizeRequests()
-                .antMatchers("/", "/index", "/user", "/user/{id}")
+                .antMatchers("/", "/index", "/register")
                 .permitAll().anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").permitAll()
                 .and()
                 .logout().permitAll();
+
     }
 
     //Creates an in-memory user. Temp for now, users & pwds should go in db
@@ -32,5 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth
                 .inMemoryAuthentication()
                 .withUser("user").password("password").roles("USER");
+
     }
+
 }
