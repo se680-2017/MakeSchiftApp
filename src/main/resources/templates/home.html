@@ -93,6 +93,33 @@ body{
 .well{
   background-color: #f79a79;
 }
+
+table.downloadTable{
+    background-color: #006600;
+    border: 2px solid black;
+}
+tr.downloadableRow{
+    border: 2px solid black;
+}
+
+ td.downloadableCell{
+     background-color: #000066;
+     border: 2px solid black;
+ }
+ a.downloadableLink{
+     color: white;
+ }
+td.downloadableMessage{
+    border: 2px solid black;
+}
+td.deadlineCell{
+    border: 2px solid black;
+}
+td.countdownCell{
+    border: 2px solid black;
+}
+
+
     </style>
 </head>
 <body>
@@ -185,7 +212,7 @@ $(".btn-pref .btn").click(function () {
 
                      var result = [testvar];
 
-                     class DownloadableFile extends React.Component {
+                     class DownloadableTableRow extends React.Component {
                          constructor( props ){
                              super( props );
                              this.state = {
@@ -195,17 +222,19 @@ $(".btn-pref .btn").click(function () {
                          fullUrl() {
                              return 'https://s3.amazonaws.com/makeschiftbucket/' + this.props.filename
                          }
-                         fileMessage(){
-                             return this.props.filename + " -- available until " + this.props.deadline.toLocaleString()
-                                 + " -- " + this.state.countdown
+                         deadlineMessage(){
+                             return "Available until " + this.props.deadline.toLocaleString()
+                         }
+                         countdownMessage(){
+                             return this.state.countdown
                          }
                          timeLeft(){
                              var deadline_ms = this.props.deadline.getTime()
                              var rightnow_ms = new Date().getTime()
                              var millis_left = deadline_ms - rightnow_ms
                              return Math.floor(millis_left/3600000) + "h "
-                                    + (Math.floor(millis_left/60000))%60 + "m "
-                                    + (Math.floor(millis_left/1000))%60 + "s remaining"
+                                 + (Math.floor(millis_left/60000))%60 + "m "
+                                 + (Math.floor(millis_left/1000))%60 + "s remaining"
                          }
                          componentDidMount() {
                              this.timerID = setInterval(
@@ -223,14 +252,22 @@ $(".btn-pref .btn").click(function () {
                          }
                          render () {
                              return React.createElement(
-                                 'div', {},
+                                 'tr', {className: "downloadableRow"},
                                  React.createElement(
-                                     'a', { href: this.fullUrl(), target: "_blank" }, this.fileMessage()
+                                     'td', {className: "downloadableCell"},
+                                     React.createElement( 'a', { className: "downloadableLink", href: this.fullUrl(), target: "_blank" }, this.props.filename )
+                                 ),
+                                 React.createElement(
+                                     'td', { className: "deadlineCell" }, this.deadlineMessage()
+                                 ),
+                                 React.createElement(
+                                     'td', { className: "countdownCell" }, this.countdownMessage()
                                  )
                              );
                          }
                      }
-                     class DownloadableList extends React.Component {
+
+                     class DownloadableTable extends React.Component {
                          constructor( props ){
                              super( props );
                              this.state = {
@@ -270,16 +307,19 @@ $(".btn-pref .btn").click(function () {
                              });
                          }
                          render () {
+                             const element = <tr classname="downloadableHeaderRow"><th>Filename</th><th>Deadline</th><th>Time Left</th></tr>;
                              return React.createElement(
-                                 "div",
-                                 null,
+                                 "table",
+                                 {className: "downloadTable"},
+                                 element,
                                  this.state.filelist.map( (fn) =>
-                                     React.createElement(DownloadableFile, { filename: fn, deadline: new Date(2017,2,15,22,30) } )
+                                     React.createElement(DownloadableTableRow, { filename: fn, deadline: new Date(2017,2,15,22,30) } )
                                  )
                              );
                          }
                      }
-                     ReactDOM.render( React.createElement(DownloadableList, {} ), document.getElementById('tab2') );
+
+                     ReactDOM.render( React.createElement(DownloadableTable, {} ), document.getElementById('tab2') );
                  </script>
              </div>
 
