@@ -9,8 +9,10 @@
     <script src="https://unpkg.com/react@15/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
-
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js"></script>
+    <script type="text/javascript" th:src="@{/javascript/keys.js}"></script>
     <style>
+
  /* USER PROFILE PAGE */
 body{
   background-color: #f77a5b;
@@ -92,6 +94,33 @@ body{
 .well{
   background-color: #f79a79;
 }
+
+table.downloadTable{
+    background-color: #006600;
+    border: 2px solid black;
+}
+tr.downloadableRow{
+    border: 2px solid black;
+}
+
+ td.downloadableCell{
+     background-color: #000066;
+     border: 2px solid black;
+ }
+ a.downloadableLink{
+     color: white;
+ }
+td.downloadableMessage{
+    border: 2px solid black;
+}
+td.deadlineCell{
+    border: 2px solid black;
+}
+td.countdownCell{
+    border: 2px solid black;
+}
+
+
     </style>
 </head>
 <body>
@@ -162,20 +191,32 @@ $(".btn-pref .btn").click(function () {
                  }
                  </script>
 
-                 <div style="align-content: center;" >
-                     <input  type="filepicker"  data-fp-apikey="" data-fp-mimetypes="*/*"
+                 <div style="align-content: center;">
+                     <input  id="fpButton" type="filepicker" data-fp-mimetypes="*/*"
                              data-fp-container="modal" data-fp-store-location="S3" onchange="myfunc()" />
+                     <script type="text/javascript">
+                         document.getElementById('fpButton').setAttribute( 'data-fp-apikey', filepickerKey )
+                     </script>
                  </div>
 
                  <div>
-                 <input type="text" id="link"> link Genarator</input>
+                     <input type="text" id="link"> link Genarator</input>
                  </div>
              </div>
 
              <!-- Tab 2: List of files the user can download and their remaining time -->
              <div class="tab-pane fade in" id="tab2">
                  <script type="text/babel">
-                     class DownloadableFile extends React.Component {
+                     var options = {
+                         accessKeyId: akid,
+                         secretAccessKey: secretKey,
+                         region: 'us-east-1',
+                         apiVersion: '2006-03-01'
+                     }
+
+                     var result = [testvar];
+
+                     class DownloadableTableRow extends React.Component {
                          constructor( props ){
                              super( props );
                              this.state = {
@@ -185,17 +226,19 @@ $(".btn-pref .btn").click(function () {
                          fullUrl() {
                              return 'https://s3.amazonaws.com/makeschiftbucket/' + this.props.filename
                          }
-                         fileMessage(){
-                             return this.props.filename + " -- available until " + this.props.deadline.toLocaleString()
-                                 + " -- " + this.state.countdown
+                         deadlineMessage(){
+                             return "Available until " + this.props.deadline.toLocaleString()
+                         }
+                         countdownMessage(){
+                             return this.state.countdown
                          }
                          timeLeft(){
                              var deadline_ms = this.props.deadline.getTime()
                              var rightnow_ms = new Date().getTime()
                              var millis_left = deadline_ms - rightnow_ms
                              return Math.floor(millis_left/3600000) + "h "
-                                    + (Math.floor(millis_left/60000))%60 + "m "
-                                    + (Math.floor(millis_left/1000))%60 + "s remaining"
+                                 + (Math.floor(millis_left/60000))%60 + "m "
+                                 + (Math.floor(millis_left/1000))%60 + "s remaining"
                          }
                          componentDidMount() {
                              this.timerID = setInterval(
@@ -213,25 +256,74 @@ $(".btn-pref .btn").click(function () {
                          }
                          render () {
                              return React.createElement(
-                                 'div', {},
+                                 'tr', {className: "downloadableRow"},
                                  React.createElement(
-                                     'a', { href: this.fullUrl(), target: "_blank" }, this.fileMessage()
+                                     'td', {className: "downloadableCell"},
+                                     React.createElement( 'a', { className: "downloadableLink", href: this.fullUrl(), target: "_blank" }, this.props.filename )
+                                 ),
+                                 React.createElement(
+                                     'td', { className: "deadlineCell" }, this.deadlineMessage()
+                                 ),
+                                 React.createElement(
+                                     'td', { className: "countdownCell" }, this.countdownMessage()
                                  )
                              );
                          }
                      }
-                     class DownloadableList extends React.Component {
-                         render() {
+
+                     class DownloadableTable extends React.Component {
+                         constructor( props ){
+                             super( props );
+                             this.state = {
+                                 filelist: this.listObjs()
+                             };
+                         }
+                         listObjs() {
+                             var s3 = new AWS.S3( options );
+                             var params = {
+                                 Bucket: "makeschiftbucket"
+                             };
+                             console.log('s3 region is', s3.config );
+                             s3.listObjectsV2( params, function(err,data) {
+                                 if (err) {
+                                     console.log(err, err.stack);
+                                 }
+                                 else{
+                                     result = data.Contents.map( function(fn) {
+                                         return fn.Key; //Bad solution for async
+                                     })
+                                 }
+                             });
+                             return result;
+                         }
+                         componentDidMount() {
+                             this.timerID = setInterval(
+                                 () => this.tick(),
+                                 5000
+                             );
+                         }
+                         componentWillUnmount() {
+                             clearInterval(this.timerID);
+                         }
+                         tick() {
+                             this.setState({
+                                 filelist: this.listObjs()
+                             });
+                         }
+                         render () {
+                             const element = <tr classname="downloadableHeaderRow"><th>Filename</th><th>Deadline</th><th>Time Left</th></tr>;
                              return React.createElement(
-                                 "div",
-                                 null,
-                                 React.createElement(DownloadableFile, { filename: "file1.txt", deadline: new Date(2017,2,15,22,30) }),
-                                 React.createElement(DownloadableFile, { filename: "file2.jpg", deadline: new Date(2017,2,15,22,45) }),
-                                 React.createElement(DownloadableFile, { filename: "file3.jpg", deadline: new Date(2017,2,15,23,0) })
+                                 "table",
+                                 {className: "downloadTable"},
+                                 element,
+                                 this.state.filelist.map( (fn) =>
+                                     React.createElement(DownloadableTableRow, { filename: fn, deadline: new Date(2017,2,15,22,30) } )
+                                 )
                              );
                          }
                      }
-                     ReactDOM.render( <DownloadableList />, document.getElementById('tab2') );
+
+                     ReactDOM.render( React.createElement(DownloadableTable, {} ), document.getElementById('tab2') );
                  </script>
              </div>
 
