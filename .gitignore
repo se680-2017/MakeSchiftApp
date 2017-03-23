@@ -23,3 +23,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+# API keys
+src/main/resources/static/javascript/keys.js

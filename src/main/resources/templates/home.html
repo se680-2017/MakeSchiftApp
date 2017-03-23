@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js"></script>
+    <script type="text/javascript" th:src="@{/javascript/keys.js}"></script>
     <style>
  /* USER PROFILE PAGE */
 body{
@@ -161,12 +162,14 @@ $(".btn-pref .btn").click(function () {
                  }
                  </script>
                  <div style="float:center">
-                     <input  type="filepicker" data-fp-apikey="" data-fp-mimetypes="*/*"
+                     <input  id="fpButton" type="filepicker" data-fp-mimetypes="*/*"
                              data-fp-container="modal" data-fp-store-location="S3" onchange="myfunc()" />
-                             
+                     <script type="text/javascript">
+                         document.getElementById('fpButton').setAttribute( 'data-fp-apikey', filepickerKey )
+                     </script>
                  </div>
                  <div>
-                 <input type="text" id="link"> link Genarator</input>
+                     <input type="text" id="link"> link Genarator</input>
                  </div>
              </div>
 
@@ -174,13 +177,13 @@ $(".btn-pref .btn").click(function () {
              <div class="tab-pane fade in" id="tab2">
                  <script type="text/babel">
                      var options = {
-                         accessKeyId: 'X',
-                         secretAccessKey: 'X',
+                         accessKeyId: akid,
+                         secretAccessKey: secretKey,
                          region: 'us-east-1',
                          apiVersion: '2006-03-01'
                      }
 
-                     var result = ["file2.jpg"];
+                     var result = [testvar];
 
                      class DownloadableFile extends React.Component {
                          constructor( props ){
@@ -227,7 +230,7 @@ $(".btn-pref .btn").click(function () {
                              );
                          }
                      }
-                     class AwsLsTest extends React.Component {
+                     class DownloadableList extends React.Component {
                          constructor( props ){
                              super( props );
                              this.state = {
@@ -243,12 +246,10 @@ $(".btn-pref .btn").click(function () {
                              s3.listObjectsV2( params, function(err,data) {
                                  if (err) {
                                      console.log(err, err.stack);
-                                     console.log("ALAS, POOR YORICK");
                                  }
                                  else{
-                                     console.log("I AM A BALLER");
                                      result = data.Contents.map( function(fn) {
-                                         return fn.Key;
+                                         return fn.Key; //Bad solution for async
                                      })
                                  }
                              });
@@ -278,20 +279,7 @@ $(".btn-pref .btn").click(function () {
                              );
                          }
                      }
-                     var flist=["file1.txt","file2.jpg","file3.jpg"]
-                     class DownloadableList extends React.Component {
-                         render() {
-                             return React.createElement(
-                                 "div",
-                                 null,
-                                 React.createElement(AwsLsTest, {}),
-                                 this.props.files.map( (fn) =>
-                                     React.createElement(DownloadableFile, { filename: fn, deadline: new Date(2017,2,15,22,30) } )
-                                 )
-                             );
-                         }
-                     }
-                     ReactDOM.render( React.createElement(DownloadableList, {files: flist} ), document.getElementById('tab2') );
+                     ReactDOM.render( React.createElement(DownloadableList, {} ), document.getElementById('tab2') );
                  </script>
              </div>
 
