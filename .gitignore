@@ -26,3 +26,4 @@ nbdist/
 
 # API keys
 src/main/resources/static/javascript/keys.js
+src/main/resources/application.properties

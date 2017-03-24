@@ -47,7 +47,7 @@ public class MySqlUserDao implements UserDao{
 
     @Override
     public User getUserById(int id){
-        final String sql = "SELECT id, first_name, last_name, username FROM user WHERE id = ?";
+        final String sql = "SELECT id, first_name, last_name, username, email, password FROM user WHERE id = ?";
         //takes in the id desired to delete, passed in from getUserById
         User users = jdbcTemplate.queryForObject(sql, new UserRowMapper(), id);
         return users;

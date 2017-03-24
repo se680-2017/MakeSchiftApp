@@ -11,8 +11,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js"></script>
     <script type="text/javascript" th:src="@{/javascript/keys.js}"></script>
-    <style>
 
+    <style>
  /* USER PROFILE PAGE */
 body{
   background-color: #f77a5b;
@@ -169,8 +169,25 @@ $(".btn-pref .btn").click(function () {
         </div>
     </div>
     <div class="well" >
-         <div class="tab-content" style="text-align: center;">
+<!--the following div displays the members on the home page-->
+        <div>
+            <table>
+                <tr>
+                    <th>id# </th>
+                    <th>Username </th>
+                    <th>First name</th>
+                </tr>
+                <tbody>
+                <tr th:each="user : ${userCollection}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.username}"></td>
+                    <td th:text="${user.fname}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
 
+         <div class="tab-content" style="text-align: center;">
              <!-- Tab 1: Mechanism for uploading the file -->
              <div class="tab-pane fade in active" id="tab1">
                  <!--Takes the username used to sign in and displays it in the homepage-->
@@ -178,17 +195,15 @@ $(".btn-pref .btn").click(function () {
                  <br/>
                  <!-- FileStack library and API. Note: data-fp-apikey="" is left empty for security reasons since
                       code will be made public on github -->
-
                  <script type="text/javascript" src="//api.filestackapi.com/filestack.js" ></script>
 
-
                  <script>
-                 function myfunc(){
-                	 
-                	 alert(event.fpfile.url) ;
-                	 console.log("i got here yaaaay");
-                	 document.getElementById("link").value=event.fpfile.url;
-                 }
+                     function myfunc(){
+
+                         alert(event.fpfile.url) ;
+                         console.log("i got here yaaaay");
+                         document.getElementById("link").value=event.fpfile.url;
+                     }
                  </script>
 
                  <div style="align-content: center;">
@@ -271,14 +286,14 @@ $(".btn-pref .btn").click(function () {
                          }
                      }
 
-                     class DownloadableTable extends React.Component {
-                         constructor( props ){
-                             super( props );
-                             this.state = {
-                                 filelist: this.listObjs()
-                             };
-                         }
-                         listObjs() {
+                             class DownloadableTable extends React.Component {
+                                 constructor( props ){
+                                     super( props );
+                                     this.state = {
+                                         filelist: this.listObjs()
+                                     };
+                                 }
+                                 listObjs() {
                              var s3 = new AWS.S3( options );
                              var params = {
                                  Bucket: "makeschiftbucket"
