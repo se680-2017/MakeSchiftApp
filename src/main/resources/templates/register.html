@@ -1,24 +1,181 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+>
 <head>
-    <meta  charset="UTF-8" />
-    <title>Title</title>
+    <title>thenewboston</title>
+    <meta charset="utf-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"></link>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.css"></link>
+
+    <!-- Website CSS style -->
+    <link rel="stylesheet" type="text/css" href="assets/css/main.css"></link>
+
+    <!-- Website Font style -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css"></link>
+
+    <!-- Google Fonts -->
+    <link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'></link>
+    <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'></link>
+
+    <title>Admin</title>
+    <style>
+
+body, html{
+     height: 100%;
+ 	background-repeat: no-repeat;
+ 	background-color: #f77a5b;
+ 	font-family: 'Oxygen', sans-serif;
+}
+
+.main{
+ 	margin-top: 70px;
+}
+
+h1.title {
+	font-size: 50px;
+	font-family: 'Passion One', cursive;
+	font-weight: 400;
+}
+
+hr{
+	width: 10%;
+	color: #fff;
+}
+
+.form-group{
+	margin-bottom: 15px;
+}
+
+label{
+	margin-bottom: 15px;
+}
+
+input,
+input::-webkit-input-placeholder {
+    font-size: 11px;
+    padding-top: 3px;
+}
+
+.main-login{
+ 	background-color: #fff;
+    /* shadows and rounded borders */
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+
+}
+
+.main-center{
+ 	margin-top: 30px;
+ 	margin: 0 auto;
+ 	max-width: 330px;
+    padding: 40px 40px;
+
+}
+
+.login-button{
+	margin-top: 5px;
+    font-weight: bold;
+}
+
+.login-register{
+	font-size: 11px;
+	text-align: center;
+}
+		</style>
 </head>
 <body>
-<form  action="#" th:action="@{/register}" th:object="${register}" method="post">
-    <h2 >Register!</h2>
+<div class="container">
 
-    <input type="text" th:field="*{fname}" placeholder="fname"/>
-    <input type="text" th:field="*{lname}" placeholder="lname"/>
-    <input type="email" th:field="*{email}" placeholder="email"/>
-    <input type="text" th:field="*{username}" placeholder="username"/>
-    <input type="password" th:field="*{password}" placeholder="password"/>
+    <form  action="#" th:action="@{/register}" th:object="${register}" method="post">
+        <div class="row main">
+            <div class="panel-heading">
+                <div class="panel-title text-center">
+                    <h1 class="title">MakeSchift</h1>
+                    <hr />
+                </div>
+            </div>
+            <div class="main-login main-center">
+                <form class="form-horizontal" method="post" action="#">
 
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Submit</button>
+                    <div class="form-group">
+                        <label  class="cols-sm-2 control-label">Your Name</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
 
-</form>
+                                <input type="text" th:field="*{fname}" class="form-control" placeholder="fname"/>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="form-group">
+                        <label  class="cols-sm-2 control-label">Your Email</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-envelope fa" aria-hidden="true"></i></span>
+
+                                <input type="email" th:field="*{email}" class="form-control"  placeholder="email"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="username" class="cols-sm-2 control-label">Username</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-flag fa" aria-hidden="true"></i></span>
+                                <input type="text" class="form-control" th:field="*{username}" name="username" id="username"  placeholder="Enter your Username" required="required"/>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="cols-sm-2 control-label">Password</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                <input type="password" th:field="*{password}" class="form-control" name="password" id="password"  placeholder="Enter your Password" required="required"/>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--   <div class="form-group">
+                           <label for="confirm" class="cols-sm-2 control-label">Confirm Password</label>
+                           <div class="cols-sm-10">
+                               <div class="input-group">
+                                   <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                   <input type="password" class="form-control" name="confirm" id="confirm"  placeholder="Confirm your Password" required/>
+                               </div>
+                           </div>
+                       </div>-->
+
+                    <div class="form-group ">
+                        <input name="submit_btn" type="submit" id="signin" value="Register"/>
+                    </div>
+                    <div class="login-register">
+                        <a href="">Login</a>
+                    </div>
+
+                </form>
+
+
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="assets/js/bootstrap.js"></script>
 </body>
 </html>
