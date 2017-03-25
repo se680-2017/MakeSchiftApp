@@ -29,3 +29,6 @@ src/main/resources/static/javascript/keys.js
 
 # bin directory (what is this for, is it being created by Eclipse??)
 bin/
+
+# Application Properties file.
+src/main/resources/application.properties

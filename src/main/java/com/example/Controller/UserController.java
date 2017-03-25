@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Collection;
 
@@ -27,15 +28,23 @@ public class UserController{
         return "register";
     }
 
+    //Display users from db
+    @GetMapping("/home")
+    public ModelAndView getAllUsers(){
+        Collection<User> userCollection = this.userService.getAllUsers();
 
+        //return back to the home page
+        ModelAndView modelAndView = new ModelAndView("home");
+        modelAndView.addObject("userCollection", userCollection);
 
-    //Don't know if we'll need to get all users at some point,
-    //but i'll keep it for now.
-    /*@RequestMapping(method = RequestMethod.GET)
-    public Collection<User> getAllUsers(){
+        return modelAndView;
+    }
 
-        return this.userService.getAllUsers();
-    }*/
+//    @RequestMapping(method = RequestMethod.GET)
+//    public Collection<User> getAllUsers(){
+//
+//        return this.userService.getAllUsers();
+//    }
 
     @RequestMapping(value = "/login/{id}", method = RequestMethod.GET)
     public User getUserById (@PathVariable("id") int id){
