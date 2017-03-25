@@ -1,7 +1,7 @@
-package com.example.controller;
+package com.example.Controller;
 
-import com.example.entity.User;
-import com.example.service.UserService;
+import com.example.Entity.User;
+import com.example.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -26,6 +26,8 @@ public class UserController{
         model.addAttribute("register", new User());
         return "register";
     }
+
+
 
     //Don't know if we'll need to get all users at some point,
     //but i'll keep it for now.
@@ -61,6 +63,6 @@ public class UserController{
     @RequestMapping(value = "/register",method = RequestMethod.POST)
     public String insertUser(@ModelAttribute User user){
         userService.insertUser(user);
-        return "login";
+        return "home";
     }
 }
