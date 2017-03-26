@@ -1,6 +1,6 @@
-package com.example.Dao;
+package com.example.dao;
 
-import com.example.Entity.User;
+import com.example.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
