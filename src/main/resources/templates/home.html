@@ -306,17 +306,18 @@ $(".btn-pref .btn").click(function () {
                          }
                      }
 
-                             class DownloadableTable extends React.Component {
-                                 constructor( props ){
-                                     super( props );
-                                     this.state = {
-                                         filelist: this.listObjs()
-                                     };
-                                 }
-                                 listObjs() {
+                     class DownloadableTable extends React.Component {
+                         constructor( props ){
+                             super( props );
+                             this.state = {
+                                 filelist: this.listObjs()
+                             };
+                         }
+                         listObjs() {
                              var s3 = new AWS.S3( options );
                              var params = {
-                                 Bucket: "makeschiftbucket"
+                                 Prefix: 'user1/',
+                                 Bucket: 'makeschiftbucket'
                              };
                              console.log('s3 region is', s3.config );
                              s3.listObjectsV2( params, function(err,data) {
