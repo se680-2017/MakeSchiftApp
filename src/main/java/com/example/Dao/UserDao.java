@@ -1,6 +1,6 @@
-package com.example.Dao;
+package com.example.dao;
 
-import com.example.Entity.User;
+import com.example.entity.User;
 
 import java.util.Collection;
 

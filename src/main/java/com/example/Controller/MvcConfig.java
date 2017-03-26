@@ -1,6 +1,6 @@
-package com.example.Controller;
+package com.example.controller;
 
-import com.example.Entity.User;
+import com.example.entity.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
