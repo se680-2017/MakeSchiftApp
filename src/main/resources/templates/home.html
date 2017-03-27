@@ -139,7 +139,16 @@ background-color: #e5e3e3;
 border-radius: 2px;
     border: 1px solid grey;
 }
-
+ td.downloadButtonCell{
+     background-color: #e5e3e3;
+     border-radius: 2px;
+     border: 1px solid grey;
+ }
+    td.deleteButtonCell{
+        background-color: #e5e3e3;
+        border-radius: 2px;
+        border: 1px solid grey;
+    }
 
     </style>
 </head>
@@ -262,8 +271,10 @@ $(".btn-pref .btn").click(function () {
                          constructor( props ){
                              super( props );
                              this.state = {
-                                 countdown: this.timeLeft()
+                                 countdown: this.timeLeft(),
+                                 deleteFlag: false
                              };
+                             this.selfDelete = this.selfDelete.bind( this );
                          }
                          fullUrl() {
                              return userURL + this.props.filename
@@ -273,6 +284,13 @@ $(".btn-pref .btn").click(function () {
                          }
                          countdownMessage(){
                              return this.state.countdown
+                         }
+                         selfDownload(){
+
+                             this.setState( {deleteFlag: true} )
+                         }
+                         selfDelete(){
+                             this.setState( {deleteFlag: true} )
                          }
                          timeLeft(){
                              var deadline_ms = this.props.deadline.getTime()
@@ -297,17 +315,32 @@ $(".btn-pref .btn").click(function () {
                              });
                          }
                          render () {
+                             if( this.state.deleteFlag ){
+                                 return null;
+                             }
+                             const dlUrl = this.fullUrl();
+                             //const downloadButton = <button type="submit">Download!</button>;
                              return React.createElement(
                                  'tr', {className: "downloadableRow"},
                                  React.createElement(
                                      'td', {className: "downloadableCell"},
-                                     React.createElement( 'a', { className: "downloadableLink", href: this.fullUrl(), target: "_blank" }, this.props.filename )
+                                     React.createElement( 'a', { className: "downloadableLink", href: dlUrl, target: "_blank" }, this.props.filename )
                                  ),
                                  React.createElement(
                                      'td', { className: "deadlineCell" }, this.deadlineMessage()
                                  ),
                                  React.createElement(
                                      'td', { className: "countdownCell" }, this.countdownMessage()
+                                 ),
+                                 React.createElement(
+                                     'td', { className: "downloadButtonCell" },
+                                     React.createElement( 'form', {method: 'get', action: dlUrl},
+                                         React.createElement( 'input', {type: 'submit', onClick: this.selfDelete, value: 'Download'})
+                                     )
+                                 ),
+                                 React.createElement(
+                                     'td', { className: "deleteButtonCell" },
+                                     React.createElement( 'button', {onClick: this.selfDelete}, 'Delete' )
                                  )
                              );
                          }
@@ -360,13 +393,19 @@ $(".btn-pref .btn").click(function () {
                              });
                          }
                          render () {
-                             const element = <tr classname="downloadableHeaderRow" ><th>Filename</th><th>Deadline</th><th>Time Left</th></tr>;
+                             const tableHead = <thead><tr className="downloadableHeaderRow" >
+                                                   <th>Filename</th><th>Deadline</th><th>Time Left</th><th></th>
+                                               </tr></thead>;
                              return React.createElement(
-                                 "table",
-                                 {className: "downloadTable"},
-                                 element,
-                                 this.state.filelist.map( (fn) =>
-                                     React.createElement(DownloadableTableRow, { filename: fn, deadline: new Date(2017,2,15,22,30) } )
+                                 'table',
+                                 {className: 'downloadTable'},
+                                 tableHead,
+                                 React.createElement(
+                                     'tbody',
+                                     {},
+                                     this.state.filelist.map( (fn) =>
+                                         React.createElement(DownloadableTableRow, { filename: fn, deadline: new Date(2017,2,29,22,30) } )
+                                     )
                                  )
                              );
                          }
