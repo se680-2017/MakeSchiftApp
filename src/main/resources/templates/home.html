@@ -139,7 +139,16 @@ background-color: #e5e3e3;
 border-radius: 2px;
     border: 1px solid grey;
 }
-
+ td.downloadButtonCell{
+     background-color: #e5e3e3;
+     border-radius: 2px;
+     border: 1px solid grey;
+ }
+    td.deleteButtonCell{
+        background-color: #e5e3e3;
+        border-radius: 2px;
+        border: 1px solid grey;
+    }
 
     </style>
 </head>
@@ -242,6 +251,13 @@ $(".btn-pref .btn").click(function () {
              <!-- Tab 2: List of files the user can download and their remaining time -->
              <div class="tab-pane fade in" id="tab2">
                  <script type="text/babel">
+                     // Hardcoded user ID.  Once login is succcessful we will add this programatically.
+                     var userID = 'user1';
+                     var userDir = encodeURIComponent( userID ) + '/';
+                     var bucketName = 'makeschiftbucket';
+                     var bucketURL = 'https://s3.amazonaws.com/'
+                                   + encodeURIComponent( bucketName ) + '/';
+                     var userURL = bucketURL + userDir;
                      var options = {
                          accessKeyId: akid,
                          secretAccessKey: secretKey,
@@ -255,17 +271,26 @@ $(".btn-pref .btn").click(function () {
                          constructor( props ){
                              super( props );
                              this.state = {
-                                 countdown: this.timeLeft()
+                                 countdown: this.timeLeft(),
+                                 deleteFlag: false
                              };
+                             this.selfDelete = this.selfDelete.bind( this );
                          }
                          fullUrl() {
-                             return 'https://s3.amazonaws.com/makeschiftbucket/' + this.props.filename
+                             return userURL + this.props.filename
                          }
                          deadlineMessage(){
-                             return "Available until " + this.props.deadline.toLocaleString()
+                             return this.props.deadline.toLocaleString()
                          }
                          countdownMessage(){
                              return this.state.countdown
+                         }
+                         selfDownload(){
+
+                             this.setState( {deleteFlag: true} )
+                         }
+                         selfDelete(){
+                             this.setState( {deleteFlag: true} )
                          }
                          timeLeft(){
                              var deadline_ms = this.props.deadline.getTime()
@@ -290,42 +315,64 @@ $(".btn-pref .btn").click(function () {
                              });
                          }
                          render () {
+                             if( this.state.deleteFlag ){
+                                 return null;
+                             }
+                             const dlUrl = this.fullUrl();
+                             //const downloadButton = <button type="submit">Download!</button>;
                              return React.createElement(
                                  'tr', {className: "downloadableRow"},
                                  React.createElement(
                                      'td', {className: "downloadableCell"},
-                                     React.createElement( 'a', { className: "downloadableLink", href: this.fullUrl(), target: "_blank" }, this.props.filename )
+                                     React.createElement( 'a', { className: "downloadableLink", href: dlUrl, target: "_blank" }, this.props.filename )
                                  ),
                                  React.createElement(
                                      'td', { className: "deadlineCell" }, this.deadlineMessage()
                                  ),
                                  React.createElement(
                                      'td', { className: "countdownCell" }, this.countdownMessage()
+                                 ),
+                                 React.createElement(
+                                     'td', { className: "downloadButtonCell" },
+                                     React.createElement( 'form', {method: 'get', action: dlUrl},
+                                         React.createElement( 'input', {type: 'submit', onClick: this.selfDelete, value: 'Download'})
+                                     )
+                                 ),
+                                 React.createElement(
+                                     'td', { className: "deleteButtonCell" },
+                                     React.createElement( 'button', {onClick: this.selfDelete}, 'Delete' )
                                  )
                              );
                          }
                      }
 
-                             class DownloadableTable extends React.Component {
-                                 constructor( props ){
-                                     super( props );
-                                     this.state = {
-                                         filelist: this.listObjs()
-                                     };
-                                 }
-                                 listObjs() {
+                     class DownloadableTable extends React.Component {
+                         constructor( props ){
+                             super( props );
+                             this.state = {
+                                 filelist: this.listObjs()
+                             };
+                         }
+                         listObjs() {
+                             // This whole function should probably only update state.filelist
+                             // AWS JS could probably be called separately?
                              var s3 = new AWS.S3( options );
                              var params = {
-                                 Bucket: "makeschiftbucket"
+                                 Prefix: userDir,
+                                 Bucket: bucketName
                              };
-                             console.log('s3 region is', s3.config );
                              s3.listObjectsV2( params, function(err,data) {
                                  if (err) {
                                      console.log(err, err.stack);
                                  }
                                  else{
-                                     result = data.Contents.map( function(fn) {
-                                         return fn.Key; //Bad solution for async
+                                     // Result is a global variable.
+                                     // This is bad.  Needs a real async solution.
+                                     result = [];
+                                     data.Contents.forEach( function(fn) {
+                                         if( fn.Key != userDir ){
+                                             result.push( fn.Key.replace( userDir, '' ) );
+                                         }
                                      })
                                  }
                              });
@@ -346,13 +393,19 @@ $(".btn-pref .btn").click(function () {
                              });
                          }
                          render () {
-                             const element = <tr classname="downloadableHeaderRow" ><th>...Filename</th><th>Deadline</th><th>Time Left</th></tr>;
+                             const tableHead = <thead><tr className="downloadableHeaderRow" >
+                                                   <th>Filename</th><th>Deadline</th><th>Time Left</th><th></th>
+                                               </tr></thead>;
                              return React.createElement(
-                                 "table",
-                                 {className: "downloadTable"},
-                                 element,
-                                 this.state.filelist.map( (fn) =>
-                                     React.createElement(DownloadableTableRow, { filename: fn, deadline: new Date(2017,2,15,22,30) } )
+                                 'table',
+                                 {className: 'downloadTable'},
+                                 tableHead,
+                                 React.createElement(
+                                     'tbody',
+                                     {},
+                                     this.state.filelist.map( (fn) =>
+                                         React.createElement(DownloadableTableRow, { filename: fn, deadline: new Date(2017,2,29,22,30) } )
+                                     )
                                  )
                              );
                          }
