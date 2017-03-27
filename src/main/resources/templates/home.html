@@ -242,6 +242,13 @@ $(".btn-pref .btn").click(function () {
              <!-- Tab 2: List of files the user can download and their remaining time -->
              <div class="tab-pane fade in" id="tab2">
                  <script type="text/babel">
+                     // Hardcoded user ID.  Once login is succcessful we will add this programatically.
+                     var userID = 'user1';
+                     var userDir = encodeURIComponent( userID ) + '/';
+                     var bucketName = 'makeschiftbucket';
+                     var bucketURL = 'https://s3.amazonaws.com/'
+                                   + encodeURIComponent( bucketName ) + '/';
+                     var userURL = bucketURL + userDir;
                      var options = {
                          accessKeyId: akid,
                          secretAccessKey: secretKey,
@@ -259,10 +266,10 @@ $(".btn-pref .btn").click(function () {
                              };
                          }
                          fullUrl() {
-                             return 'https://s3.amazonaws.com/makeschiftbucket/' + this.props.filename
+                             return userURL + this.props.filename
                          }
                          deadlineMessage(){
-                             return "Available until " + this.props.deadline.toLocaleString()
+                             return this.props.deadline.toLocaleString()
                          }
                          countdownMessage(){
                              return this.state.countdown
@@ -314,19 +321,25 @@ $(".btn-pref .btn").click(function () {
                              };
                          }
                          listObjs() {
+                             // This whole function should probably only update state.filelist
+                             // AWS JS could probably be called separately?
                              var s3 = new AWS.S3( options );
                              var params = {
-                                 Prefix: 'user1/',
-                                 Bucket: 'makeschiftbucket'
+                                 Prefix: userDir,
+                                 Bucket: bucketName
                              };
-                             console.log('s3 region is', s3.config );
                              s3.listObjectsV2( params, function(err,data) {
                                  if (err) {
                                      console.log(err, err.stack);
                                  }
                                  else{
-                                     result = data.Contents.map( function(fn) {
-                                         return fn.Key; //Bad solution for async
+                                     // Result is a global variable.
+                                     // This is bad.  Needs a real async solution.
+                                     result = [];
+                                     data.Contents.forEach( function(fn) {
+                                         if( fn.Key != userDir ){
+                                             result.push( fn.Key.replace( userDir, '' ) );
+                                         }
                                      })
                                  }
                              });
@@ -347,7 +360,7 @@ $(".btn-pref .btn").click(function () {
                              });
                          }
                          render () {
-                             const element = <tr classname="downloadableHeaderRow" ><th>...Filename</th><th>Deadline</th><th>Time Left</th></tr>;
+                             const element = <tr classname="downloadableHeaderRow" ><th>Filename</th><th>Deadline</th><th>Time Left</th></tr>;
                              return React.createElement(
                                  "table",
                                  {className: "downloadTable"},
