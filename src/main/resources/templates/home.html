@@ -4,6 +4,7 @@
     <title>MakeSchift Home</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="https://unpkg.com/react@15/dist/react.js"></script>
@@ -11,6 +12,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.7.20.min.js"></script>
     <script type="text/javascript" th:src="@{/javascript/keys.js}"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+
+    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/i18n/defaults-*.min.js"></script>
+
+
 
     <style>
  /* USER PROFILE PAGE */
@@ -31,7 +40,7 @@ body{
     background-color: rgba(255, 255, 255, 1);
 }
 .card.hovercard .card-background {
-    height: 230px;
+    height: 150px;
 }
 .card-background img {
     -webkit-filter: blur(25px);
@@ -95,6 +104,11 @@ body{
   background-color: #f79a79;
 }
 
+.downloadTable{
+color: #4286f4;
+font-weight:bold;
+}
+
 .th{
 text-align: right;
 }
@@ -106,7 +120,7 @@ table.downloadTable{
 
     padding: 25px;
 
-    margin-left:230px;
+    margin-left:200px;
     background-color: #ffffff;
 
 }
@@ -114,12 +128,15 @@ table.downloadTable{
 tr.downloadableRow{
 
 border-radius: 15px;
+background-color: #dabcdd;
 }
 
  td.downloadableCell{
 border-radius: 15px;
      background-color: #ffffff;
      border: 1px solid grey;
+     width:450px;
+font-weight: bold;
  }
  a.downloadableLink{
      color: black;
@@ -133,22 +150,38 @@ td.deadlineCell{
 background-color: #e5e3e3;
 border-radius: 2px;
     border: 1px solid grey;
+    padding-right:20px;
+     padding-left: 20px;
+     font-weight: normal;
+     color: black;
+
 }
 td.countdownCell{
 background-color: #e5e3e3;
 border-radius: 2px;
     border: 1px solid grey;
+    padding-right:20px;
+     padding-left: 20px;
+     font-weight: normal;
+     color: black;
 }
  td.downloadButtonCell{
      background-color: #e5e3e3;
      border-radius: 2px;
      border: 1px solid grey;
+
+     color: #4286f4;
+
  }
     td.deleteButtonCell{
         background-color: #e5e3e3;
         border-radius: 2px;
         border: 1px solid grey;
+        color: red;
     }
+
+
+
 
     </style>
 </head>
@@ -199,22 +232,7 @@ $(".btn-pref .btn").click(function () {
     </div>
     <div class="well" >
 <!--the following div displays the members on the home page-->
-        <div>
-            <table>
-                <tr>
-                    <th>id# </th>
-                    <th>Username </th>
-                    <th>First name</th>
-                </tr>
-                <tbody>
-                <tr th:each="user : ${userCollection}">
-                    <td th:text="${user.id}"></td>
-                    <td th:text="${user.username}"></td>
-                    <td th:text="${user.fname}"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+
 
          <div class="tab-content" style="text-align: center;">
              <!-- Tab 1: Mechanism for uploading the file -->
@@ -234,18 +252,36 @@ $(".btn-pref .btn").click(function () {
                          document.getElementById("link").value=event.fpfile.url;
                      }
                  </script>
+<div  style="display:inline-block;">
 
-                 <div style="align-content: center;">
                      <input  id="fpButton" type="filepicker" data-fp-mimetypes="*/*"
                              data-fp-container="modal" data-fp-store-location="S3" onchange="myfunc()" />
                      <script type="text/javascript">
                          document.getElementById('fpButton').setAttribute( 'data-fp-apikey', filepickerKey )
                      </script>
-                 </div>
 
-                 <div>
-                     <input type="text" id="link"> link Genarator</input>
-                 </div>
+    <select  style="margin-left:10px;">
+        <option>Select Reciever</option>
+        <option th:each="user : ${userCollection}">
+
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.username}"></td>
+            <!--<td th:text="${user.fname}"></td>-->
+
+        </option>
+    </select>
+
+    <script>
+        $('.selectpicker').selectpicker({
+  style: 'btn-info',
+  size: 4
+});
+
+    </script>
+</div>
+                 <!--<div>-->
+                     <!--<input type="text" id="link"> link Genarator</input>-->
+                 <!--</div>-->
              </div>
 
              <!-- Tab 2: List of files the user can download and their remaining time -->
@@ -394,7 +430,7 @@ $(".btn-pref .btn").click(function () {
                          }
                          render () {
                              const tableHead = <thead><tr className="downloadableHeaderRow" >
-                                                   <th>Filename</th><th>Deadline</th><th>Time Left</th><th></th>
+                                                   <td>Filename</td><td>Deadline</td><td>Time Left</td><td></td>
                                                </tr></thead>;
                              return React.createElement(
                                  'table',
