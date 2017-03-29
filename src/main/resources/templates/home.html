@@ -313,7 +313,7 @@ $(".btn-pref .btn").click(function () {
                          apiVersion: '2006-03-01'
                      }
 
-                     var result = [testvar];
+                     var result = [[testvar, new Date(2017,2,29,22,59)]];
 
                      class DownloadableTableRow extends React.Component {
                          constructor( props ){
@@ -343,6 +343,7 @@ $(".btn-pref .btn").click(function () {
                              var deadline_ms = this.props.deadline.getTime()
                              var rightnow_ms = new Date().getTime()
                              var millis_left = deadline_ms - rightnow_ms
+                             this.setState( {deleteFlag: millis_left>0?false:true} ); // because thymeleaf hates if statements
                              return Math.floor(millis_left/3600000) + "h "
                                  + (Math.floor(millis_left/60000))%60 + "m "
                                  + (Math.floor(millis_left/1000))%60 + "s remaining"
@@ -416,7 +417,11 @@ $(".btn-pref .btn").click(function () {
                                      result = [];
                                      data.Contents.forEach( function(fn) {
                                          if( fn.Key != userDir ){
-                                             result.push( fn.Key.replace( userDir, '' ) );
+                                             result.push( [
+                                                 fn.Key.replace( userDir, '' ),
+                                                 fn.LastModified
+                                                 ]
+                                             );
                                          }
                                      })
                                  }
@@ -448,8 +453,11 @@ $(".btn-pref .btn").click(function () {
                                  React.createElement(
                                      'tbody',
                                      {},
-                                     this.state.filelist.map( (fn) =>
-                                         React.createElement(DownloadableTableRow, { filename: fn, deadline: new Date(2017,2,29,22,30) } )
+                                     this.state.filelist.map( ([fname,fdate]) =>
+                                         React.createElement(DownloadableTableRow, {
+                                             filename: fname,
+                                             deadline: new Date( fdate.getTime() + 30000)  // +1/2 minute, DST whatevah
+                                         })
                                      )
                                  )
                              );
