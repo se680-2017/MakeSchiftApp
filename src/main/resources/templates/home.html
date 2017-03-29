@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>MakeSchift Home</title>
+    <title>Welcome to MakeSchift</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/css/bootstrap-select.min.css"/>
@@ -75,7 +75,7 @@ body{
 }
 .card.hovercard .card-info .card-title {
     padding:0 5px;
-    font-size: 20px;
+    font-size: 30px;
     line-height: 1;
     color: #262626;
     background-color: rgba(255, 255, 255, 0.1);
@@ -222,7 +222,7 @@ $(".btn-pref .btn").click(function () {
             <img  alt="" src="http://pictures.topspeed.com/IMG/crop/201608/lamborghini-aventado-10_600x0w.jpg"/>
         </div>
         <div class="card-info">
-            <span class="card-title">RekMor</span>
+            <span class="card-title" th:inline="text">[[${#httpServletRequest.remoteUser}]]</span>
         </div>
     </div>
     <div class="btn-pref btn-group btn-group-justified btn-group-lg" role="group" aria-label="...">
@@ -250,7 +250,7 @@ $(".btn-pref .btn").click(function () {
              <!-- Tab 1: Mechanism for uploading the file -->
              <div class="tab-pane fade in active" id="tab1">
                  <!--Takes the username used to sign in and displays it in the homepage-->
-                 <h1 th:inline="text">Hello, [[${#httpServletRequest.remoteUser}]]!</h1>
+                 <h1>Upload and Send a File to a Friend!</h1>
                  <br/>
                  <!-- FileStack library and API. Note: data-fp-apikey="" is left empty for security reasons since
                       code will be made public on github -->
@@ -273,7 +273,7 @@ $(".btn-pref .btn").click(function () {
                      </script>
 
     <select  style="margin-left:10px;">
-        <option>Select Reciever</option>
+        <option>Select Member</option>
         <option th:each="user : ${userCollection}">
 
             
@@ -298,9 +298,10 @@ $(".btn-pref .btn").click(function () {
 
              <!-- Tab 2: List of files the user can download and their remaining time -->
              <div class="tab-pane fade in" id="tab2">
-                 <script type="text/babel">
+                 <script type="text/babel" th:inline="javascript">
                      // Hardcoded user ID.  Once login is succcessful we will add this programatically.
-                     var userID = 'user1';
+                     //var userID = 'user1';
+                     var userID = [[${#httpServletRequest.remoteUser}]];
                      var userDir = encodeURIComponent( userID ) + '/';
                      var bucketName = 'makeschiftbucket';
                      var bucketURL = 'https://s3.amazonaws.com/'
