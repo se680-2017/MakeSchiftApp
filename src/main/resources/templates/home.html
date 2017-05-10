@@ -277,11 +277,8 @@ $(".btn-pref .btn").click(function () {
     <select  style="margin-left:10px;">
         <option>Select Member</option>
         <option th:each="user : ${userCollection}">
-
-            
             <td th:text="${user.username}"></td>
             <!--<td th:text="${user.fname}"></td>-->
-
         </option>
     </select>
 
