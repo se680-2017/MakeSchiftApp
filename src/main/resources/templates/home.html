@@ -383,7 +383,7 @@ $(".btn-pref .btn").click(function () {
                      // DownloadableTableRow
                      // This represents one downloadable element in the Downloadable Table.
                      // It tracks its own time, and deletes itself once time expires.
-                     // At the moment this deletion only hides itself from the webgui.
+                     // Also calls the AWS delete method (helper function defined above)
                      // TODO: Display info from new directory structure to new columns
                      class DownloadableTableRow extends React.Component {
                          constructor( props ){
@@ -404,12 +404,10 @@ $(".btn-pref .btn").click(function () {
                              return this.state.countdown
                          }
                          selfDownload(){
-                             console.log("Clicked download.");//this.setState( {deleteFlag: true} )
+                             console.log("Clicked download.");
                          }
                          selfDelete(){
-                             var killMe = this.props.filename;
-                             console.log( killMe );
-                             iGotThis( killMe );
+                             iGotThis( this.props.filename );
                              this.setState( {deleteFlag: true} )
                          }
                          timeLeft(){
@@ -476,7 +474,7 @@ $(".btn-pref .btn").click(function () {
                          }
                          listObjs() {
                              // This whole function should probably only update state.filelist
-                             // AWS JS could probably be called separately?
+                             // AWS JS call should be called in a separate javascript section
                              var s3 = new AWS.S3( options );
                              var params = {
                                  Prefix: userDir,
