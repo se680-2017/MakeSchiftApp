@@ -205,8 +205,7 @@ border-radius: 2px;
 $(document).ready(function() {
 $(".btn-pref .btn").click(function () {
     $(".btn-pref .btn").removeClass("btn-primary").addClass("btn-default");
-    // $(".tab").addClass("active"); // instead of this do the below 
-    $(this).removeClass("btn-default").addClass("btn-primary");   
+    $(this).removeClass("btn-default").addClass("btn-primary");
 });
 });
 </script>
@@ -215,7 +214,6 @@ $(".btn-pref .btn").click(function () {
     <div class="card hovercard">
         <div class="card-background">
             <img class="card-bkimg" alt="" src="http://pictures.topspeed.com/IMG/crop/201608/lamborghini-aventado-10_600x0w.jpg"/>
-            <!-- http://lorempixel.com/850/280/people/9/ -->
         </div>
         <div class="useravatar" style="padding-left:70px;">
             <form style="float:right" th:action="@{/logout}" method="post">
@@ -251,6 +249,26 @@ $(".btn-pref .btn").click(function () {
          <div class="tab-content" style="text-align: center;">
              <!-- Tab 1: Mechanism for uploading the file -->
              <div class="tab-pane fade in active" id="tab1">
+                 <script>
+                     var fromUser = "user1/";
+                     var toUser = "noRecepient/";
+                     var expDate = "1845000000/";
+                     var uploadDuration = 30;
+                     function rebuildWidget() {
+                         expDate =  encodeURIComponent( Math.floor((new Date().getTime())/1000) + parseInt(uploadDuration) ) + '/';
+                         var element = document.getElementById('fpButton');
+                         element.type = "filepicker";
+                         element.setAttribute('data-fp-mimetypes', '*/*');
+                         element.setAttribute('data-fp-store-path', toUser+fromUser+expDate );
+                         element.setAttribute('data-fp-container', 'modal');
+                         element.setAttribute('data-fp-store-access', 'public');
+                         element.setAttribute('data-fp-store-location', 'S3');
+                         // Gotta remove old button
+                         var oldButton = document.getElementsByClassName( "fp__btn" );
+                         oldButton[0].parentNode.removeChild(oldButton[0]);
+                         filepicker.constructWidget(element);
+                     }
+                 </script>
                  <!--Takes the username used to sign in and displays it in the homepage-->
                  <h1>Upload and Send a File to a Friend!</h1>
                  <br/>
@@ -260,29 +278,51 @@ $(".btn-pref .btn").click(function () {
 
                  <script>
                      function myfunc(){
-
                          alert(event.fpfile.url) ;
                          console.log("i got here yaaaay");
                          document.getElementById("link").value=event.fpfile.url;
                      }
                  </script>
-<div  style="display:inline-block;">
-
-                     <input  id="fpButton" type="filepicker" data-fp-mimetypes="*/*" data-fp-store-path="user1/"
+<div id="uploadControls" style="display:inline-block;">
+                     <input  id="fpButton" type="filepicker" data-fp-mimetypes="*/*" data-fp-store-path="mofo/"
                              data-fp-container="modal" data-fp-store-access="public" data-fp-store-location="S3" onchange="myfunc()" />
+
                      <script type="text/javascript">
-                         document.getElementById('fpButton').setAttribute( 'data-fp-apikey', filepickerKey )
+                         document.getElementById('fpButton').setAttribute( 'data-fp-apikey', filepickerKey );
+                     </script>
+                     <script>
+                         $(document).ready(function() {
+                             $("#userDropDown").change(function () {
+                                 var e = document.getElementById("userDropDown");
+                                 toUser = encodeURIComponent( e.options[e.selectedIndex].text ) + '/';
+                                 rebuildWidget();
+                             });
+                             $("#timeDropDown").change(function () {
+                                 var e = document.getElementById("timeDropDown");
+                                 //var epochSec = Math.floor((new Date().getTime())/1000);
+                                 uploadDuration = e.options[e.selectedIndex].value;
+                                 //expDate = encodeURIComponent( epochSec ) + '/';
+                                 rebuildWidget();
+                             });
+                         });
                      </script>
 
-    <select  style="margin-left:10px;">
+    <select id="userDropDown" style="margin-left:10px;" >
         <option>Select Member</option>
+        <option>user1</option>
         <option th:each="user : ${userCollection}">
-
-            
             <td th:text="${user.username}"></td>
             <!--<td th:text="${user.fname}"></td>-->
-
         </option>
+    </select>
+
+    <select id="timeDropDown" style="margin-left:10px;" >
+        <option value="0">Select Lifespan</option>
+        <option value="30">30 seconds</option>
+        <option value="120">2 minutes</option>
+        <option value="3600">1 hour</option>
+        <option value="86400">1 day</option>
+        <option value="345600">2 weeks</option>
     </select>
 
     <script>
@@ -301,8 +341,6 @@ $(".btn-pref .btn").click(function () {
              <!-- Tab 2: List of files the user can download and their remaining time -->
              <div class="tab-pane fade in" id="tab2">
                  <script type="text/babel" th:inline="javascript">
-                     // Hardcoded user ID.  Once login is succcessful we will add this programatically.
-                     //var userID = 'user1';
                      var userID = [[${#httpServletRequest.remoteUser}]];
                      var userDir = encodeURIComponent( userID ) + '/';
                      var bucketName = 'makeschiftbucket';
@@ -316,8 +354,14 @@ $(".btn-pref .btn").click(function () {
                          apiVersion: '2006-03-01'
                      }
 
-                     var result = [[testvar, new Date(2017,2,29,22,59)]];
+                     var downloadablesInBucket = [[testvar, new Date(2017,2,29,22,59)]];
 
+                     // DownloadableTableRow
+                     // This represents one downloadable element in the Downloadable Table.
+                     // It tracks its own time, and deletes itself once time expires.
+                     // At the moment this deletion only hides itself from the webgui.
+                     // TASK1: Show unexpired downloads in new directory structure.
+                     // TASK2: Implement deletion method
                      class DownloadableTableRow extends React.Component {
                          constructor( props ){
                              super( props );
@@ -370,7 +414,6 @@ $(".btn-pref .btn").click(function () {
                                  return null;
                              }
                              const dlUrl = this.fullUrl();
-                             //const downloadButton = <button type="submit">Download!</button>;
                              return React.createElement(
                                  'tr', {className: "downloadableRow"},
                                  React.createElement(
@@ -395,6 +438,9 @@ $(".btn-pref .btn").click(function () {
                          }
                      }
 
+                     // DownloadableTable
+                     // This Table lists all downloadable files.
+                     // Under the hood, it is polling the AWS bucket every 5 seconds for new files.
                      class DownloadableTable extends React.Component {
                          constructor( props ){
                              super( props );
@@ -415,21 +461,25 @@ $(".btn-pref .btn").click(function () {
                                      console.log(err, err.stack);
                                  }
                                  else{
-                                     // Result is a global variable.
+                                     // downloadablesInBucket is a global variable.
                                      // This is bad.  Needs a real async solution.
-                                     result = [];
+                                     downloadablesInBucket = [];
                                      data.Contents.forEach( function(fn) {
-                                         if( fn.Key != userDir ){
-                                             result.push( [
-                                                 fn.Key.replace( userDir, '' ),
-                                                 fn.LastModified
+                                         if( fn.Key.charAt(fn.Key.length-1) != '/' ){  // exclude directories
+                                             var paths = fn.Key.split('/');
+                                             if( paths.length == 4 ){ // number of expected filepath elements
+                                                 console.log( paths[2] )
+                                             }
+                                             downloadablesInBucket.push( [
+                                                 fn.Key.replace( userDir, '' ), // TODO: fix abridged filename
+                                                 paths[2] // deadline
                                                  ]
                                              );
                                          }
                                      })
                                  }
                              });
-                             return result;
+                             return downloadablesInBucket;
                          }
                          componentDidMount() {
                              this.timerID = setInterval(
@@ -444,6 +494,7 @@ $(".btn-pref .btn").click(function () {
                              this.setState({
                                  filelist: this.listObjs()
                              });
+                             console.log("Logging active.")
                          }
                          render () {
                              const tableHead = <thead><tr className="downloadableHeaderRow" >
@@ -459,7 +510,7 @@ $(".btn-pref .btn").click(function () {
                                      this.state.filelist.map( ([fname,fdate]) =>
                                          React.createElement(DownloadableTableRow, {
                                              filename: fname,
-                                             deadline: new Date( fdate.getTime() + 30000)  // +1/2 minute, DST whatevah
+                                             deadline: new Date( parseInt( fdate ) * 1000 )
                                          })
                                      )
                                  )
