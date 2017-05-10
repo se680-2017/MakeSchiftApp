@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        //http.csrf().disable();//delete this to get back to normal
+        http.csrf().disable();//delete this to get back to normal
         http
                 .authorizeRequests()
                 .antMatchers("/", "/index", "/register")
