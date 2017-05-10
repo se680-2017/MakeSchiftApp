@@ -381,16 +381,16 @@ $(".btn-pref .btn").click(function () {
                              return this.state.countdown
                          }
                          selfDownload(){
-                             this.setState( {deleteFlag: true} )
+                             console.log("Clicked download.");//this.setState( {deleteFlag: true} )
                          }
                          selfDelete(){
                              this.setState( {deleteFlag: true} )
                          }
                          timeLeft(){
-                             var deadline_ms = this.props.deadline.getTime()
-                             var rightnow_ms = new Date().getTime()
-                             var millis_left = deadline_ms - rightnow_ms
-                             this.setState( {deleteFlag: millis_left>0?false:true} ); // because thymeleaf hates if statements
+                             var deadline_ms = this.props.deadline.getTime();
+                             var rightnow_ms = new Date().getTime();
+                             var millis_left = deadline_ms - rightnow_ms;
+                             (millis_left > 0) ? false : this.selfDelete(); // because thymeleaf hates my if statements
                              return Math.floor(millis_left/3600000) + "h "
                                  + (Math.floor(millis_left/60000))%60 + "m "
                                  + (Math.floor(millis_left/1000))%60 + "s remaining"
@@ -428,7 +428,7 @@ $(".btn-pref .btn").click(function () {
                                  ),
                                  React.createElement(
                                      'td', { className: "downloadButtonCell" },
-                                     React.createElement( 'a', { className: "btn btn-primary", href: dlUrl, target: "_blank", onClick: this.selfDelete}, "Access" )
+                                     React.createElement( 'a', { className: "btn btn-primary", href: dlUrl, target: "_blank", onClick: this.selfDownload}, "Access" )
                                  ),
                                  React.createElement(
                                      'td', { className: "deleteButtonCell" },
