@@ -250,6 +250,8 @@ $(".btn-pref .btn").click(function () {
              <!-- Tab 1: Mechanism for uploading the file -->
              <div class="tab-pane fade in active" id="tab1">
                  <script>
+                     // Had to write this code to rebuild the FilePicker widget.
+                     // constructWidget() and its behavior was NOT documented in the API :(
                      var fromUser = "user1/";
                      var toUser = "noRecepient/";
                      var expDate = "1845000000/";
@@ -299,9 +301,7 @@ $(".btn-pref .btn").click(function () {
                              });
                              $("#timeDropDown").change(function () {
                                  var e = document.getElementById("timeDropDown");
-                                 //var epochSec = Math.floor((new Date().getTime())/1000);
                                  uploadDuration = e.options[e.selectedIndex].value;
-                                 //expDate = encodeURIComponent( epochSec ) + '/';
                                  rebuildWidget();
                              });
                          });
@@ -310,9 +310,9 @@ $(".btn-pref .btn").click(function () {
     <select id="userDropDown" style="margin-left:10px;" >
         <option>Select Member</option>
         <option>user1</option>
+        <option>user2</option>
         <option th:each="user : ${userCollection}">
             <td th:text="${user.username}"></td>
-            <!--<td th:text="${user.fname}"></td>-->
         </option>
     </select>
 
@@ -333,13 +333,37 @@ $(".btn-pref .btn").click(function () {
 
     </script>
 </div>
-                 <!--<div>-->
-                     <!--<input type="text" id="link"> link Genarator</input>-->
-                 <!--</div>-->
+
              </div>
 
              <!-- Tab 2: List of files the user can download and their remaining time -->
              <div class="tab-pane fade in" id="tab2">
+                 <script>
+                     var options = {
+                         accessKeyId: akid,
+                         secretAccessKey: secretKey,
+                         region: 'us-east-1',
+                         apiVersion: '2006-03-01'
+                     };
+                     var bucketName = 'makeschiftbucket';
+                     function iGotThis( objName ) {
+                         console.log( "I can take care of that for ya" );
+                         var s3 = new AWS.S3( options );
+                         var params = {
+                             Bucket: bucketName,
+                             Key: 'user1/' + objName
+                         };
+                         s3.deleteObject( params, function(err,data) {
+                             if (err) {
+                                 console.log( "of course I couldn't delete " + objName );
+                                 console.log(err, err.stack);
+                             }
+                             else {
+                                 console.log( "OK status from delete: " + objName );
+                             }
+                         });
+                     }
+                 </script>
                  <script type="text/babel" th:inline="javascript">
                      var userID = [[${#httpServletRequest.remoteUser}]];
                      var userDir = encodeURIComponent( userID ) + '/';
@@ -354,14 +378,13 @@ $(".btn-pref .btn").click(function () {
                          apiVersion: '2006-03-01'
                      }
 
-                     var downloadablesInBucket = [[testvar, new Date(2017,2,29,22,59)]];
+                     var downloadablesInBucket = [[testvar, Math.floor(new Date(2017,7,29,22,59)/1000)]];
 
                      // DownloadableTableRow
                      // This represents one downloadable element in the Downloadable Table.
                      // It tracks its own time, and deletes itself once time expires.
                      // At the moment this deletion only hides itself from the webgui.
-                     // TASK1: Show unexpired downloads in new directory structure.
-                     // TASK2: Implement deletion method
+                     // TODO: Display info from new directory structure to new columns
                      class DownloadableTableRow extends React.Component {
                          constructor( props ){
                              super( props );
@@ -384,6 +407,9 @@ $(".btn-pref .btn").click(function () {
                              console.log("Clicked download.");//this.setState( {deleteFlag: true} )
                          }
                          selfDelete(){
+                             var killMe = this.props.filename;
+                             console.log( killMe );
+                             iGotThis( killMe );
                              this.setState( {deleteFlag: true} )
                          }
                          timeLeft(){
@@ -468,7 +494,7 @@ $(".btn-pref .btn").click(function () {
                                          if( fn.Key.charAt(fn.Key.length-1) != '/' ){  // exclude directories
                                              var paths = fn.Key.split('/');
                                              if( paths.length == 4 ){ // number of expected filepath elements
-                                                 console.log( paths[2] )
+                                                 //console.log( paths[2] ) // should be epoch-seconds
                                              }
                                              downloadablesInBucket.push( [
                                                  fn.Key.replace( userDir, '' ), // TODO: fix abridged filename
