@@ -50,7 +50,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.inMemoryAuthentication().withUser("user1").password("password").roles("ADMIN");
         auth.inMemoryAuthentication().withUser("user2").password("password").roles("USER");
         auth.inMemoryAuthentication().withUser("user3").password("password").roles("USER");
-
+        auth.inMemoryAuthentication().withUser("rek").password("password").roles("USER");
+        auth.inMemoryAuthentication().withUser("fx").password("password").roles("USER");
+        auth.inMemoryAuthentication().withUser("zwarren").password("password").roles("USER");
+        auth.inMemoryAuthentication().withUser("aren123").password("password").roles("USER");
+        auth.inMemoryAuthentication().withUser("rbl").password("password").roles("USER");
+        auth.inMemoryAuthentication().withUser("lol").password("password").roles("USER");
+        auth.inMemoryAuthentication().withUser("hz").password("password").roles("USER");
     }
 
 }
