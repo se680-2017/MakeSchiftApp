@@ -441,8 +441,12 @@ $(".btn-pref .btn").click(function () {
                              return React.createElement(
                                  'tr', {className: "downloadableRow"},
                                  React.createElement(
-                                     'td', {className: "downloadableCell"},
-                                     React.createElement( 'p', { className: "filenameText" }, this.props.filename )
+                                     'td', {className: "downloadableCell"},  // filename
+                                     React.createElement( 'p', { className: "filenameText" }, this.props.filename.split('/')[2] )
+                                 ),
+                                 React.createElement(
+                                     'td', {className: "downloadableCell"},  // from-user
+                                     React.createElement( 'p', { className: "filenameText" }, this.props.filename.split('/')[0] )
                                  ),
                                  React.createElement(
                                      'td', { className: "deadlineCell" }, this.deadlineMessage()
@@ -522,7 +526,7 @@ $(".btn-pref .btn").click(function () {
                          }
                          render () {
                              const tableHead = <thead><tr className="downloadableHeaderRow" >
-                                                   <td>Filename</td><td>Deadline</td><td>Time Left</td><td></td>
+                                                   <td>Filename</td><td>From</td><td>Deadline</td><td>Time Left</td><td></td>
                                                </tr></thead>;
                              return React.createElement(
                                  'table',
