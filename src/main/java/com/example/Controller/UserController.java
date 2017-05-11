@@ -72,6 +72,6 @@ public class UserController{
     @RequestMapping(value = "/register",method = RequestMethod.POST)
     public String insertUser(@ModelAttribute User user){
         userService.insertUser(user);
-        return "home";
+        return "redirect:/home";
     }
 }

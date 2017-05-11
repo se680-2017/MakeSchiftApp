@@ -40,7 +40,7 @@ body{
     background-color: rgba(255, 255, 255, 1);
 }
 .card.hovercard .card-background {
-    height: 150px;
+    height: 190px;
 }
 .card-background img {
     -webkit-filter: blur(25px);
@@ -59,7 +59,7 @@ body{
     right: 0;
 }
 .card.hovercard .useravatar img {
-    width: 150px;
+    width: 170px;
     height: 150px;
    
     -webkit-border-radius: 50%;
@@ -209,18 +209,43 @@ $(".btn-pref .btn").click(function () {
 });
 });
 </script>
+
+
  
 <div class="cardboard">
     <div class="card hovercard">
         <div class="card-background">
-            <img class="card-bkimg" alt="" src="http://pictures.topspeed.com/IMG/crop/201608/lamborghini-aventado-10_600x0w.jpg"/>
+            <img class="card-bkimg" id="image1" alt="" />
         </div>
         <div class="useravatar" style="padding-left:70px;">
             <form style="float:right" th:action="@{/logout}" method="post">
                 <input type="submit" value="Sign Out"/>
             </form>
-            <img  alt="" src="http://pictures.topspeed.com/IMG/crop/201608/lamborghini-aventado-10_600x0w.jpg"/>
+            <img  alt="" id="image2"/>
         </div>
+
+        <script type="text/babel" th:inline="javascript">
+
+var user = [[${#httpServletRequest.remoteUser}]];
+console.log(user);
+
+if(user=='user1'){
+document.getElementById('image1').setAttribute( 'src', 'http://buyersguide.caranddriver.com/media/assets/submodel/6869.jpg' );
+document.getElementById('image2').setAttribute( 'src', 'http://buyersguide.caranddriver.com/media/assets/submodel/6869.jpg' );
+}
+
+
+else if(user=='user2'){
+document.getElementById('image1').setAttribute( 'src', 'https://www.lamborghini.com/en-en/sites/en-en/files/DAM/it/models_gateway/blocks/huracan.png' );
+document.getElementById('image2').setAttribute( 'src', 'https://www.lamborghini.com/en-en/sites/en-en/files/DAM/it/models_gateway/blocks/huracan.png' );
+}
+
+else{
+document.getElementById('image1').setAttribute( 'src', 'https://img.buzzfeed.com/buzzfeed-static/static/2016-12/28/17/campaign_images/buzzfeed-prod-web-10/literally-just-21-super-cute-pictures-of-dwarf-bu-2-31771-1482965559-1_dblbig.jpg' );
+document.getElementById('image2').setAttribute( 'src', 'https://img.buzzfeed.com/buzzfeed-static/static/2016-12/28/17/campaign_images/buzzfeed-prod-web-10/literally-just-21-super-cute-pictures-of-dwarf-bu-2-31771-1482965559-1_dblbig.jpg' );
+}
+
+</script>
         <div class="card-info">
             <span class="card-title" th:inline="text">[[${#httpServletRequest.remoteUser}]]</span>
         </div>
